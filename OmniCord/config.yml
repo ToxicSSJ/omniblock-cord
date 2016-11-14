@@ -1,0 +1,23 @@
+      #------------------------------------------------------------------------------#
+      #|			iCord (c) - Internal iCraft Plugin Configuration          		|#
+      #|					Pl Version for iCraft 1.0								|#
+      #|				 iCraft 2015 - 2016 All Rights Reserved				        |#
+      #------------------------------------------------------------------------------#
+      #|	Principal Config File:													|#
+      #|							- Flexible Database								|#
+      #|							- Internal Modifications						|#
+      #------------------------------------------------------------------------------#
+
+database:
+          mysql:
+                 activado: false
+                 host: sql.i-craft.org
+                 puerto: 36652
+                 database: iCraft
+                 usuario: root
+                 clave: ic-conL1A3T
+
+
+socket-ports:
+          LOCLB1: 54546
+          LOCGS1: 54547
