@@ -154,7 +154,7 @@ public class PacketProcessorHandler {
 	
 	public static void sendLobbies2Player(String player, String data) {
 		
-		if(data.contains("*") && data.contains(",")){
+		if(data.contains("*")){
 			
 			ProxiedPlayer target = ProxyServer.getInstance().getPlayer(player);
 			

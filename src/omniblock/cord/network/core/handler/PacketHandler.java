@@ -52,6 +52,8 @@ public class PacketHandler {
 			String player = modifier.getString(1);
 			String data = modifier.getString(2);
 			
+			System.out.println("data = " + data);
+			
 			PacketProcessorHandler.sendLobbies2Player(player, data);
 			return;
 			
