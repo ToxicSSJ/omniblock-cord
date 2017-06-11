@@ -2,6 +2,15 @@ package omniblock.cord.addons.motd.type;
 
 import omniblock.cord.addons.motd.object.MOTDPreset;
 
+/**
+ * 
+ * Esta clase tiene los diferentes MOTD que maneja
+ * el servidor con el fin de que puedan ser cambiados
+ * dinamicamente.
+ * 
+ * @author zlToxicNetherlz
+ *
+ */
 public enum MOTDType {
 
 	COMMON_MOTD(new MOTDPreset(

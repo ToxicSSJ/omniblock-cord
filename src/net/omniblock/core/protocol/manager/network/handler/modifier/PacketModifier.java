@@ -9,6 +9,20 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+/**
+ * 
+ * Esta clase es el objeto serializable y fundamental de los
+ * paquetes el cual puede contener cualquier tipo de información
+ * primitava guardada en distintas listas y adquiribles por medio
+ * de distintas funcionas. Esta clase es frecuentemente usada
+ * por los sistemas que manejan los paquetes y se suele enviar
+ * desde el sistema de conexión por sockets <strong>OmniCore -> OmniCord</strong> como
+ * un objeto no serializado para luego ser procesado por el
+ * PacketHandler.
+ * 
+ * @author zlToxicNetherlz
+ * @see omniblock.cord.network.core.handler.PacketHandler#readPacket(String)
+ */
 public class PacketModifier implements Serializable {
 
 	private static final long serialVersionUID = -2156916617122303270L;

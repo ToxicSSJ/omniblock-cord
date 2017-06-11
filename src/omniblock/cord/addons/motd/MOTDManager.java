@@ -8,10 +8,25 @@ import omniblock.cord.OmniCord;
 import omniblock.cord.addons.motd.type.MOTDType;
 import omniblock.cord.util.TextUtil;
 
+/**
+ * 
+ * Con esta clase se maneja el sistema
+ * del MOTD del servidor cuando un jugador
+ * pingea.
+ * 
+ * @author zlToxicNetherlz
+ *
+ */
 public class MOTDManager implements Listener {
 
 	public static MOTDType motd = MOTDType.COMMON_MOTD;
 	
+	/**
+	 * 
+	 * Con este metodo se inicializa el sistema registrando
+	 * los eventos de la clase.
+	 * 
+	 */
 	public static void start() {
 		
 		OmniCord.getPlugin().getProxy().getPluginManager().registerListener(OmniCord.getPlugin(), new MOTDManager());

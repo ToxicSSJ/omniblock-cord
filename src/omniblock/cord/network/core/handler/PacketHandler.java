@@ -6,8 +6,30 @@ import omniblock.cord.OmniCord;
 import omniblock.cord.util.lib.omnicore.GamePreset;
 import omniblock.cord.util.lib.omnicore.MessageType;
 
+/**
+ * 
+ * Con esta clase se manejará todo el
+ * procesamiento de los paquetes recibidos
+ * conviertiendo la información y procesandola
+ * con diferentes metodos en dependencia
+ * de la información.
+ * 
+ * @author zlToxicNetherlz
+ *
+ */
 public class PacketHandler {
 
+	/**
+	 * 
+	 * Con este metodo se podrá leer los respectivos paquetes no serializados
+	 * en formato String, que servirán para dar instrucciones de procesamientos
+	 * a dichos paquetes. Está clase deserializa la información y la convierte
+	 * al objeto {@link PacketModifier.class} del cual podrá tomar sus metodos
+	 * para leer cada dato obtenido por medio de sus funciones.
+	 * 
+	 * @param unserialized_packetmodifier El PacketModifier no serializado.
+	 * @see PacketModifier
+	 */
 	@SuppressWarnings("deprecation")
 	public void readPacket(String unserialized_packetmodifier) {
 		
@@ -21,6 +43,20 @@ public class PacketHandler {
 			Boolean party = modifier.getBoolean(0);
 			
 			PacketProcessorHandler.sendPlayer2Server(player, servername, party);
+			return;
+			
+		} else if(message_type.equalsIgnoreCase(MessageType.PLAYER_LOGIN_EVALUATE.getKey())) {
+			
+			String player = modifier.getString(1);
+			
+			PacketProcessorHandler.sendAuthEvaluate2Player(player);
+			return;
+			
+		} else if(message_type.equalsIgnoreCase(MessageType.PLAYER_LOGIN_SUCESS.getKey())) {
+			
+			String player = modifier.getString(1);
+			
+			PacketProcessorHandler.sendAuthEvaluate2Player(player);
 			return;
 			
 		} else if(message_type.equalsIgnoreCase(MessageType.SERVER_SOCKET_INFO.getKey())) {
@@ -51,8 +87,6 @@ public class PacketHandler {
 			
 			String player = modifier.getString(1);
 			String data = modifier.getString(2);
-			
-			System.out.println("data = " + data);
 			
 			PacketProcessorHandler.sendLobbies2Player(player, data);
 			return;

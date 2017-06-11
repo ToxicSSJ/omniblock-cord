@@ -21,11 +21,26 @@ import omniblock.cord.OmniCord;
 import omniblock.cord.addons.network.PARTYManager.PartyUtils.RequestStatus;
 import omniblock.cord.util.TextUtil;
 
+/**
+ * 
+ * Esta clase es la encargada de manejar todos los metodos
+ * y funciones para el sistema de parties.
+ * 
+ * @author zlToxicNetherlz
+ *
+ */
 public class PARTYManager implements Listener {
 	
 	protected static Map<String, List<String>> ACTIVED_PARTIES = new HashMap<String, List<String>>();
 	protected static Map<ProxiedPlayer, RequestStatus> ACTIVED_REQUESTS = new HashMap<ProxiedPlayer, RequestStatus>();
 	
+	/**
+	 * 
+	 * Con este metodo se inicializa el sistema de parties
+	 * registrando los eventos y los comandos respectivamente, para
+	 * luego poder ejercer las funciones correctamente.
+	 * 
+	 */
 	public static void start(){
 		
 		OmniCord.getPlugin().getProxy().getPluginManager().registerListener(OmniCord.getPlugin(), new PARTYManager());
@@ -94,6 +109,14 @@ public class PARTYManager implements Listener {
 		
 	}
 	
+	/**
+	 * 
+	 * Este metodo funciona como un "manejador" de los argumentos base o default
+	 * de un comando para ser procesados y darles funciones especificas.
+	 * 
+	 * @param sender Quién envió el comando.
+	 * @param args Los argumentos del comando.
+	 */
 	@SuppressWarnings("deprecation")
 	public static void handle(CommandSender sender, String[] args) {
 		
@@ -367,8 +390,25 @@ public class PARTYManager implements Listener {
 		
 	}
 
+	/**
+	 * 
+	 * Esta clase es la encargada de tener todas las utilidades
+	 * y funciones para las Parties con el fin de que sea mas facil
+	 * su manejo y administración. 
+	 * 
+	 * @author zlToxicNetherlz
+	 *
+	 */
 	public static class PartyUtils {
 		
+		/**
+		 * 
+		 * Con este metodo se puede recibir la lista con los nombres de los
+		 * miembros de una party a partir del dueño de la party.
+		 * 
+		 * @param owner El dueño de la party.
+		 * @return La lista con los nombres de los miembros de la party.
+		 */
 		public static List<String> getPartyMembers(ProxiedPlayer owner){
 			
 			if(ACTIVED_PARTIES.containsKey(owner.getName())){
@@ -379,6 +419,14 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se le envia la información de la
+		 * party a un jugador.
+		 * 
+		 * @param player El nombre del jugador al cual se le enviará la información.
+		 * @param owner El dueño de la party de la cual se sacará la información.
+		 */
 		@SuppressWarnings("deprecation")
 		public static void displayMembers(ProxiedPlayer player, String owner){
 			
@@ -400,6 +448,14 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se saca a un jugador de una party por medio del
+		 * dueño de la party y el nombre del miembro que se desea expulsar.
+		 * 
+		 * @param owner El dueño de la party.
+		 * @param member Nombre del miembro que se quiere expulsar.
+		 */
 		@SuppressWarnings("deprecation")
 		public static void kickParty(ProxiedPlayer owner, String member){
 			
@@ -432,6 +488,14 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Este metodo debe ser llamado cuando un miembro quiera
+		 * abandonar su party, y se encargará de sacarlo de la party
+		 * en la cual está.
+		 * 
+		 * @param member El miembro que quiere salir de su party.
+		 */
 		@SuppressWarnings("deprecation")
 		public static void leaveParty(ProxiedPlayer member){
 			
@@ -474,6 +538,14 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Este metodo se encarga de borrar una party por medio del nombre
+		 * del dueño en formato String.
+		 * 
+		 * @param name Nombre del dueño de la party.
+		 * @see PartyUtils#deleteParty(ProxiedPlayer)
+		 */
 		public static void deleteParty(String name){
 			
 			ProxiedPlayer owner = getPlayer(name);
@@ -481,6 +553,14 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Este metodo borra una party por medio del dueño de la misma,
+		 * una vez se borre dicha party todos los miembros son expulsados
+		 * y la party se disuelve.
+		 * 
+		 * @param owner El dueño de la party.
+		 */
 		@SuppressWarnings("deprecation")
 		public static void deleteParty(ProxiedPlayer owner){
 			
@@ -512,6 +592,14 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se crea una party en base a un jugador
+		 * el cual será definido como el dueño de la misma, este metodo
+		 * solo creará la party sin ningún miembro.
+		 * 
+		 * @param owner El jugador el cual será el creador y dueño de la party.
+		 */
 		@SuppressWarnings("deprecation")
 		public static void makeParty(ProxiedPlayer owner){
 			
@@ -528,6 +616,15 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se puede enviar una petición a un jugador
+		 * para que este se una a la respectiva party de la cual se
+		 * le envió dicha petición.
+		 * 
+		 * @param owner El dueño de la party.
+		 * @param member El jugador el cual se le enviará la petición.
+		 */
 		@SuppressWarnings("deprecation")
 		public static void addMember(ProxiedPlayer owner, ProxiedPlayer member){
 			
@@ -547,6 +644,17 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se verifica si un jugador es miembro de cierta
+		 * party basandose en el dueño de la party del cual se verificará
+		 * está afirmación y el jugador.
+		 * 
+		 * @param owner El dueño de la party.
+		 * @param name El nombre del jugador del cual se verificará si
+		 * pertenece o no a la party del dueño.
+		 * @return <strong>true</strong> si el jugador pertenece a la party.
+		 */
 		public static boolean isMember(ProxiedPlayer owner, String name){
 			
 			if(!isOwner(owner)) return false;
@@ -561,6 +669,15 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se verifica si un jugador especificado
+		 * por su nombre pertenece a una party.
+		 * 
+		 * @param name El nombre del jugador.
+		 * @return <strong>true</strong> si el jugador pertenece a una party.
+		 * @see PartyUtils#isMember(ProxiedPlayer)
+		 */
 		public static boolean isMember(String name){
 			
 			for(String k : ACTIVED_PARTIES.keySet()){
@@ -575,6 +692,14 @@ public class PARTYManager implements Listener {
 			return false;
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se verifica si un jugador
+		 * pertenece a una party.
+		 * 
+		 * @param member El jugador del cual se comprobará la información.
+		 * @return <strong>true</strong> si el jugador pertenece a una party.
+		 */
 		public static boolean isMember(ProxiedPlayer member){
 			
 			for(String k : ACTIVED_PARTIES.keySet()){
@@ -590,6 +715,16 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se verifica si un jugador especificado por
+		 * su nombre es el dueño de una party.
+		 * 
+		 * @param name El nombre del jugador del cual se quiere verificar si es
+		 * dueño de una party.
+		 * @return <strong>true</strong> si el jugador es dueño de la party.
+		 * @see PartyUtils#isOwner(ProxiedPlayer)
+		 */
 		public static boolean isOwner(String name){
 			
 			ProxiedPlayer owner = getPlayer(name);
@@ -598,6 +733,15 @@ public class PARTYManager implements Listener {
 			return false;
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se verifica si un jugador
+		 * es el dueño de una party.
+		 * 
+		 * @param owner El jugador del cual se quiere verificar si es
+		 * dueño de una party.
+		 * @return <strong>true</strong> si el jugador es dueño de la party.
+		 */
 		public static boolean isOwner(ProxiedPlayer owner){
 			
 			if(ACTIVED_PARTIES.containsKey(owner.getName())) return true;
@@ -605,6 +749,17 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se puede obtener un ProxiedPlayer en base al
+		 * nombre del jugador, este jugador debe estár conectado en la
+		 * Network y su nombre debe ser exactamente el especificado, Aunque
+		 * este metodo también puede obtener el nombre del jugador
+		 * en base a sus iniciales.
+		 * 
+		 * @param name Nombre del jugador.
+		 * @return El jugador encontrado, si no se encuentra devuelve <strong>null</strong>.
+		 */
 		public static ProxiedPlayer getPlayer(String name){
 			
 			for(ProxiedPlayer p : OmniCord.getInstance().getProxy().getPlayers()){
@@ -618,6 +773,14 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se puede obtener el nombre del dueño de la
+		 * party basandose en un miembro de la party.
+		 * 
+		 * @param member Nombre del miembro de la party.
+		 * @return El nombre del dueño de la party, si no se encuentra devuelve <strong>null</strong>.
+		 */
 		public static String getOwner(String member){
 			
 			String owner = null;
@@ -639,6 +802,15 @@ public class PARTYManager implements Listener {
 			
 		}
 		
+		/**
+		 * 
+		 * Con este metodo se le envia una petición de party a un
+		 * jugador basandose en quien esta enviando la petición y a
+		 * quien se le enviará.
+		 * 
+		 * @param owner El jugador que está enviando la petición.
+		 * @param member El jugador al cual se le enviará la petición.
+		 */
 		@SuppressWarnings("deprecation")
 		private static void sendRequest(ProxiedPlayer owner, ProxiedPlayer member){
 			

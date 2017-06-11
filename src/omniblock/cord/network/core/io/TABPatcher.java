@@ -8,8 +8,24 @@ import net.md_5.bungee.event.EventHandler;
 import omniblock.cord.OmniCord;
 import omniblock.cord.util.TextUtil;
 
+/**
+ * 
+ * Esta clase es la encargada de manejar
+ * el TabList de el servidor por medio de
+ * eventos como de entrada o cambios de 
+ * servidor.
+ * 
+ * @author zlToxicNetherlz
+ *
+ */
 public class TABPatcher implements Listener {
 	
+	/**
+	 * 
+	 * Con este metodo se inicializa el registro de los
+	 * eventos de esta clase.
+	 * 
+	 */
 	public static void setup(){
 		
 		OmniCord.getPlugin().getProxy().getPluginManager().registerListener(OmniCord.getPlugin(), new TABPatcher());

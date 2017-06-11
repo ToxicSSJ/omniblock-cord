@@ -2,6 +2,15 @@ package omniblock.cord.network.core.io;
 
 import omniblock.cord.util.TextUtil;
 
+/**
+ * 
+ * Esta clase podrá alamacenar funciones
+ * extras en base a mensajes estaticos dentro
+ * de sus variables o metodos utiles.
+ * 
+ * @author zlToxicNetherlz
+ *
+ */
 public class MSGPatcher {
 
 	public static final String YOURE_BANNED_WITHOUT_VARS = TextUtil.format(

@@ -1,5 +1,15 @@
 package omniblock.cord.addons.motd.object;
 
+/**
+ * 
+ * Esta clase que funciona com constructor
+ * puede almacenar las dos lineas que se usan
+ * en un MOTD, para luego ser utilizado en la base
+ * del sistema.
+ * 
+ * @author zlToxicNetherlz
+ *
+ */
 public class MOTDPreset {
 	
 	private String line1;
@@ -14,17 +24,7 @@ public class MOTDPreset {
 	
 	public String getLine(int number) {
 		
-		if(number == 1) {
-			
-			return line1;
-			
-		} else if(number == 2) {
-			
-			return line2;
-			
-		}
-		
-		return line1;
+		return number == 1 ? line1 : line2;
 		
 	}
 	
