@@ -56,7 +56,7 @@ public class PacketHandler {
 			
 			String player = modifier.getString(1);
 			
-			PacketProcessorHandler.sendAuthEvaluate2Player(player);
+			PacketProcessorHandler.registerAuthSucess2Player(player);
 			return;
 			
 		} else if(message_type.equalsIgnoreCase(MessageType.SERVER_SOCKET_INFO.getKey())) {
