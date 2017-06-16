@@ -26,7 +26,7 @@ import java.sql.Statement;
  *
  */
 public enum TableType {
-	RESOLVER("CREATE TABLE IF NOT EXISTS uuid_resolver ()");
+	RESOLVER("CREATE TABLE IF NOT EXISTS uuid_resolver (id INTEGER PRIMARY KEY AUTO_INCREMENT, p_offline_uuid TINYTEXT NOT NULL, p_online_uuid TINYTEXT NOT NULL, p_resolver TINYTEXT NOT NULL, p_last_name TINYTEXT NOT NULL)");
 	
 	String createSql;
 	

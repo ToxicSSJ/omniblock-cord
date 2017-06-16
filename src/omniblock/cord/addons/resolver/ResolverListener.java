@@ -1,30 +1,28 @@
-/*
- *  XMPP API to chat and interact with the League of Legends ChatServers. 
- *
- *  Copyright (C) 2017  Josue Acevedo
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package omniblock.cord.addons.resolver;
+
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import omniblock.cord.OmniCord;
 
 /**
  * @author wirlie
  *
  */
-public class ResolverListener {
+public class ResolverListener implements Listener {
 
 	public static void setup() {
+		ProxyServer.getInstance().getPluginManager().registerListener(OmniCord.getInstance(), new ResolverListener());
+	}
+	
+	@EventHandler
+	public void onPlayerNetworkJoin(PostLoginEvent e) {
+		ProxiedPlayer player = e.getPlayer();
+		PendingConnection connection = player.getPendingConnection();
+		
 		
 	}
 

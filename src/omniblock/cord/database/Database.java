@@ -36,7 +36,7 @@ public class Database {
 		console.sendMessage(new ComponentBuilder("------------------[MySQL]--------------------").color(ChatColor.GOLD).create());
 		
 		String host = OmniCord.getInstance().getConfig().getString("database.mysql.host");
-		String port = OmniCord.getInstance().getConfig().getString("database.mysql.port");
+		int port = OmniCord.getInstance().getConfig().getInt("database.mysql.port");
 		String user = OmniCord.getInstance().getConfig().getString("database.mysql.user");
 		String pass = OmniCord.getInstance().getConfig().getString("database.mysql.pass");
 		String database = OmniCord.getInstance().getConfig().getString("database.mysql.database");
@@ -45,7 +45,7 @@ public class Database {
 			console.sendMessage(new ComponentBuilder("[!] &fEl host no pudo ser obtenido (null)").color(ChatColor.RED).create());
 		}
 		
-		if(port == null){
+		if(port == 0){
 			console.sendMessage(new ComponentBuilder("[!] &fEl puerto no pudo ser obtenido (null)").color(ChatColor.RED).create());
 		}
 		
@@ -61,9 +61,9 @@ public class Database {
 			console.sendMessage(new ComponentBuilder("[!] &fLa base de datos no pudo ser obtenido (null)").color(ChatColor.RED).create());
 		}
 		
-		if(host != null && port != null && user != null && pass != null && database != null){
+		if(host != null && port != 0 && user != null && pass != null && database != null){
 			console.sendMessage(new ComponentBuilder("Host: ").color(ChatColor.AQUA).append(host).color(ChatColor.WHITE).create());
-			console.sendMessage(new ComponentBuilder("Puerto: ").color(ChatColor.AQUA).append(port).color(ChatColor.WHITE).create());
+			console.sendMessage(new ComponentBuilder("Puerto: ").color(ChatColor.AQUA).append(String.valueOf(port)).color(ChatColor.WHITE).create());
 			console.sendMessage(new ComponentBuilder("Base de Datos: ").color(ChatColor.AQUA).append(database).color(ChatColor.WHITE).create());
 			console.sendMessage(new ComponentBuilder("Usuario: ").color(ChatColor.AQUA).append(user).color(ChatColor.WHITE).create());
 			console.sendMessage(new ComponentBuilder("Contraseña: ").color(ChatColor.AQUA).append("<Por seguridad no se muestra>").color(ChatColor.WHITE).create());

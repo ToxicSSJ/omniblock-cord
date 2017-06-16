@@ -24,6 +24,7 @@ import omniblock.cord.addons.motd.MOTDManager;
 import omniblock.cord.addons.network.PARTYManager;
 import omniblock.cord.addons.network.TABManager;
 import omniblock.cord.addons.resolver.ResolverListener;
+import omniblock.cord.database.Database;
 import omniblock.cord.network.core.io.TABPatcher;
 import omniblock.cord.network.socket.Socket;
 import omniblock.cord.network.textures.BungeeResourcepacks;
@@ -69,7 +70,7 @@ public class OmniCord extends Plugin {
     }
     
     public void Implements() {
-    	
+    	Database.makeConnection();
     	BungeeResourcepacks.setup();
     	
     	MOTDManager.start();
