@@ -23,21 +23,19 @@ import net.md_5.bungee.config.YamlConfiguration;
 import omniblock.cord.addons.motd.MOTDManager;
 import omniblock.cord.addons.network.PARTYManager;
 import omniblock.cord.addons.network.TABManager;
+import omniblock.cord.addons.resolver.ResolverListener;
 import omniblock.cord.network.core.io.TABPatcher;
 import omniblock.cord.network.socket.Socket;
 import omniblock.cord.network.textures.BungeeResourcepacks;
 
 public class OmniCord extends Plugin {
 	
-    public static Plugin plugin;
     public static OmniCord instance;
     
     public static Configuration configuration;
 
 	@Override
 	public void onEnable() {
-    	
-    	plugin = this;
     	instance = this;
     	
     	Socket.ADAPTER.startServer(8005);
@@ -80,7 +78,7 @@ public class OmniCord extends Plugin {
     	PARTYManager.start();
     	
     	TABPatcher.setup();
-    	
+    	ResolverListener.setup();
     }
 
     public void Commands() {
@@ -115,10 +113,10 @@ public class OmniCord extends Plugin {
         }
         
         try {
-            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(plugin.getDataFolder(), "config.yml"));
+            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(instance.getDataFolder(), "config.yml"));
         }
         catch (IOException e) {
-            plugin.getProxy().getConsole().sendMessage("[OmniCord] [ERROR] Ha ocurrido un error al cargar la configuracion.");
+            instance.getProxy().getConsole().sendMessage("[OmniCord] [ERROR] Ha ocurrido un error al cargar la configuracion.");
             e.printStackTrace();
         }
         
@@ -126,10 +124,6 @@ public class OmniCord extends Plugin {
 
     public static OmniCord getInstance() {
     	return instance;
-    }
-    
-    public static Plugin getPlugin() {
-        return plugin;
     }
     
 }
