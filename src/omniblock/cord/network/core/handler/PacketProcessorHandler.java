@@ -82,7 +82,7 @@ public class PacketProcessorHandler {
 					
 					if(players.size() <= 1) return;
 					
-					OmniCord.getInstance().getProxy().getScheduler().schedule(OmniCord.getPlugin(), new Runnable() {
+					ProxyServer.getInstance().getScheduler().schedule(OmniCord.getInstance(), new Runnable() {
 						
 			            @SuppressWarnings("serial")
 						@Override
@@ -307,7 +307,7 @@ public class PacketProcessorHandler {
 	 */
 	public static void sendBan2Player(String player) {
 		
-		OmniCord.getInstance().getProxy().getScheduler().schedule(OmniCord.getPlugin(), new Runnable() {
+		ProxyServer.getInstance().getScheduler().schedule(OmniCord.getInstance(), new Runnable() {
 			
             @SuppressWarnings("deprecation")
 			@Override
@@ -325,7 +325,7 @@ public class PacketProcessorHandler {
         					Integer PORT = SOCKET_PORTS.get(server.getName());
         					sendData2Server(target.getName(), MessageType.PLAYER_SEND_BAN.getKey(), PORT);
         					
-        					OmniCord.getInstance().getProxy().getScheduler().schedule(OmniCord.getPlugin(), new Runnable() {
+        					ProxyServer.getInstance().getScheduler().schedule(OmniCord.getInstance(), new Runnable() {
         						
         						@Override
         			            public void run() {

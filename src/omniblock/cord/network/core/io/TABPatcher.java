@@ -1,5 +1,6 @@
 package omniblock.cord.network.core.io;
 
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
@@ -28,7 +29,7 @@ public class TABPatcher implements Listener {
 	 */
 	public static void setup(){
 		
-		OmniCord.getPlugin().getProxy().getPluginManager().registerListener(OmniCord.getPlugin(), new TABPatcher());
+		ProxyServer.getInstance().getPluginManager().registerListener(OmniCord.getInstance(), new TABPatcher());
 		
 	}
 	

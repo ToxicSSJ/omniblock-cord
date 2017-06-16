@@ -1,5 +1,6 @@
 package omniblock.cord.addons.motd;
 
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -29,7 +30,7 @@ public class MOTDManager implements Listener {
 	 */
 	public static void start() {
 		
-		OmniCord.getPlugin().getProxy().getPluginManager().registerListener(OmniCord.getPlugin(), new MOTDManager());
+		ProxyServer.getInstance().getPluginManager().registerListener(OmniCord.getInstance(), new MOTDManager());
 		
 	}
 	

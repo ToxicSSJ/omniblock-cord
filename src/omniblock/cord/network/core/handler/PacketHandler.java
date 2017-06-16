@@ -1,8 +1,8 @@
 package omniblock.cord.network.core.handler;
 
+import net.md_5.bungee.api.ProxyServer;
 import net.omniblock.core.protocol.manager.network.handler.modifier.PacketModifier;
 import net.omniblock.core.protocol.manager.network.handler.modifier.PacketModifier.PacketModifierHandler;
-import omniblock.cord.OmniCord;
 import omniblock.cord.util.lib.omnicore.GamePreset;
 import omniblock.cord.util.lib.omnicore.MessageType;
 
@@ -24,7 +24,7 @@ public class PacketHandler {
 	 * Con este metodo se podrá leer los respectivos paquetes no serializados
 	 * en formato String, que servirán para dar instrucciones de procesamientos
 	 * a dichos paquetes. Está clase deserializa la información y la convierte
-	 * al objeto {@link PacketModifier.class} del cual podrá tomar sus metodos
+	 * al objeto {@link PacketModifier} del cual podrá tomar sus metodos
 	 * para leer cada dato obtenido por medio de sus funciones.
 	 * 
 	 * @param unserialized_packetmodifier El PacketModifier no serializado.
@@ -127,12 +127,12 @@ public class PacketHandler {
 			
 		} else if(message_type.equalsIgnoreCase(MessageType.WELCOME_PROXY.getKey())) {
 			
-			OmniCord.getPlugin().getProxy().getConsole().sendMessage("Welcome OmniCore :)! Connected!");
+			ProxyServer.getInstance().getConsole().sendMessage("Welcome OmniCore :)! Connected!");
 			return;
 			
 		} else if(message_type.equalsIgnoreCase(MessageType.BYE_PROXY.getKey())) {
 			
-			OmniCord.getPlugin().getProxy().getConsole().sendMessage("Goodbye OmniCore :(! Disconnected!");
+			ProxyServer.getInstance().getConsole().sendMessage("Goodbye OmniCore :(! Disconnected!");
 			return;
 			
 		}
