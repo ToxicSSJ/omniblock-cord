@@ -31,7 +31,6 @@ import omniblock.cord.network.textures.BungeeResourcepacks;
 public class OmniCord extends Plugin {
 	
     public static OmniCord instance;
-    
     public static Configuration configuration;
 
 	@Override
@@ -125,6 +124,10 @@ public class OmniCord extends Plugin {
     public static OmniCord getInstance() {
     	return instance;
     }
+    
+	public Configuration getConfig() {
+		return configuration;
+	}
     
 }
 
