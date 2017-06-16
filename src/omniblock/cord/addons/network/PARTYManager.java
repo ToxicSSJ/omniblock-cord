@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.collect.Lists;
 
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -43,9 +44,9 @@ public class PARTYManager implements Listener {
 	 */
 	public static void start(){
 		
-		OmniCord.getPlugin().getProxy().getPluginManager().registerListener(OmniCord.getPlugin(), new PARTYManager());
-		OmniCord.getPlugin().getProxy().getPluginManager().registerCommand(OmniCord.getPlugin(), new omniblock.cord.addons.network.PARTYManager.PARTYCmds.PartyCMD());
-		OmniCord.getPlugin().getProxy().getPluginManager().registerCommand(OmniCord.getPlugin(), new omniblock.cord.addons.network.PARTYManager.PARTYCmds.GrupoCMD());
+		ProxyServer.getInstance().getPluginManager().registerListener(OmniCord.getInstance(), new PARTYManager());
+		ProxyServer.getInstance().getPluginManager().registerCommand(OmniCord.getInstance(), new omniblock.cord.addons.network.PARTYManager.PARTYCmds.PartyCMD());
+		ProxyServer.getInstance().getPluginManager().registerCommand(OmniCord.getInstance(), new omniblock.cord.addons.network.PARTYManager.PARTYCmds.GrupoCMD());
 		
 	}
 	
@@ -762,7 +763,7 @@ public class PARTYManager implements Listener {
 		 */
 		public static ProxiedPlayer getPlayer(String name){
 			
-			for(ProxiedPlayer p : OmniCord.getInstance().getProxy().getPlayers()){
+			for(ProxiedPlayer p : ProxyServer.getInstance().getPlayers()){
 				if(p.getName().startsWith(name)){
 					return p;
 					
@@ -876,7 +877,7 @@ public class PARTYManager implements Listener {
 				
 				status = Status.WAITING;
 				
-				OmniCord.getInstance().getProxy().getScheduler().schedule(OmniCord.getPlugin(), new Runnable() {
+				ProxyServer.getInstance().getScheduler().schedule(OmniCord.getInstance(), new Runnable() {
 					
 					@Override
 		            public void run() {
