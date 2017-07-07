@@ -140,14 +140,14 @@ public class PacketProcessorHandler {
 					
 					if(SAVED_IP_AUTH.get(player).equalsIgnoreCase(ip)){
 						
-						sendData2Server("AUTH", "SUCESS", SOCKET_PORTS.get(server.getName()));
+						sendData2Server("SUCESS#" + player, "AUTH", SOCKET_PORTS.get(server.getName()));
 						return;
 						
 					}
 					
 				}
 				
-				sendData2Server("AUTH", "LOGIN", SOCKET_PORTS.get(server.getName()));
+				sendData2Server("LOGIN#" + player, "AUTH", SOCKET_PORTS.get(server.getName()));
 				return;
 				
 			}

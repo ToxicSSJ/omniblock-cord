@@ -14,15 +14,15 @@ import omniblock.cord.addons.motd.object.MOTDPreset;
 public enum MOTDType {
 
 	COMMON_MOTD(new MOTDPreset(
-			"            &9&lOmniblock Network &7&m--&r &c&lBETA \n",
-			"            &7Fase de Testeos Internos ")),
+			"            &9Omniblock Network &7➧ &cBETA CERRADA \n",
+			"            &8&l★ &7¡Proximamente fecha de Apertura! &8&l★")),
 	PROMOTION_MOTD(new MOTDPreset(
-			"            &9&lOmniblock Network &7&m--&r &c&lBETA \n",
-			"            &7Rangos al &e&l50%!! ")),
+			"            &9Omniblock Network &7➧ &cBETA CERRADA \n",
+			"            &8&l★ &7¡Proximamente fecha de Apertura! &8&l★")),
 	
 	MAINTENACE(new MOTDPreset(
-			"            &9&lOmniblock Network &7&m--&r &c&lBETA \n",
-			"            &c&lMantenimiento ")),
+			"            &9Omniblock Network &7➧ &cBETA CERRADA \n",
+			"            &8&l★ &7¡Proximamente fecha de Apertura! &8&l★")),
 	
 	;
 	
