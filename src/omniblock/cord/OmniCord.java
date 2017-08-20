@@ -20,13 +20,17 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import net.omniblock.packets.OmniPackets;
+import net.omniblock.packets.network.socket.Sockets;
+import net.omniblock.packets.network.socket.helper.SocketHelper;
+import net.omniblock.packets.object.external.SystemType;
 import omniblock.cord.addons.motd.MOTDManager;
 import omniblock.cord.addons.network.PARTYManager;
 import omniblock.cord.addons.network.TABManager;
 import omniblock.cord.addons.resolver.ResolverListener;
 import omniblock.cord.database.Database;
 import omniblock.cord.network.core.io.TABPatcher;
-import omniblock.cord.network.socket.Socket;
+import omniblock.cord.network.packets.PacketsAdapter;
 import omniblock.cord.network.textures.BungeeResourcepacks;
 
 public class OmniCord extends Plugin {
@@ -36,10 +40,14 @@ public class OmniCord extends Plugin {
 
 	@Override
 	public void onEnable() {
+		
     	instance = this;
     	
-    	Socket.ADAPTER.startServer(8005);
-        
+    	OmniPackets.setupSystem(SystemType.OMNICORD);
+    	PacketsAdapter.registerReaders();
+    	
+    	Sockets.SERVER.startServer(SocketHelper.OMNICORD_SOCKET_PORT);
+    	
     	loadConfig();
     	Implements();
     	Commands();
