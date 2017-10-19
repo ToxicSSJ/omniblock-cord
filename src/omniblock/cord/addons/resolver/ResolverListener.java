@@ -30,7 +30,9 @@ import omniblock.cord.database.Database;
 public class ResolverListener implements Listener {
 
 	public static void setup() {
+		
 		ProxyServer.getInstance().getPluginManager().registerListener(OmniCord.getInstance(), new ResolverListener());
+		
 	}
 	
 	@EventHandler

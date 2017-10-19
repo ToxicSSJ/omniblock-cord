@@ -1,5 +1,6 @@
 name: OmniCord
 main: omniblock.cord.OmniCord
 version: 3.0.1.2
+depend: [OmniPackets]
 author: Omniblock Team
 website: www.omniblock.net

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import net.md_5.bungee.api.ProxyServer;
@@ -15,7 +16,6 @@ import net.omniblock.packets.network.structure.packet.PlayerSendBanPacket;
 import net.omniblock.packets.network.structure.packet.ResposeAuthEvaluatePacket;
 import net.omniblock.packets.network.structure.packet.ResposeBoostedGamesPacket;
 import net.omniblock.packets.network.structure.packet.ResposeGamePartyInfoPacket;
-import net.omniblock.packets.network.structure.packet.ResposePlayerGameLobbiesPacket;
 import net.omniblock.packets.network.structure.packet.ResposePlayerNetworkBoosterPacket;
 import omniblock.cord.OmniCord;
 import omniblock.cord.addons.network.PARTYManager.PartyUtils;
@@ -173,6 +173,13 @@ public class PacketsTools {
 		
 	}
 	
+	/**
+	 * 
+	 * Con este metodo se enviará información acerca de los boosters
+	 * de los juegos a el servidor argumentado.
+	 * 
+	 * @param servername El servidor al cual se le enviará la información.
+	 */
 	public static void sendBoostedGames2Server(String servername) {
 		
 		List<String> boostedgames = new ArrayList<String>();
@@ -191,6 +198,25 @@ public class PacketsTools {
     			.setBoostedGames(boostedgames)
     			.build().setReceiver(SOCKET_PORTS.get(servername))
     			);
+		
+	}
+	
+	/**
+	 * 
+	 * Con este metodo se puede recibir el nombre del paquete
+	 * de texturas que posee un jugador en base al nombre de
+	 * dicho jugador.
+	 * 
+	 * @param playername El nombre del jugador.
+	 * @return El nombre del resourcepack, si no se encuentra
+	 * al jugador retornará el paquete de texturas 'OMNIBLOCK_DEFAULT'.
+	 */
+	public static String getTexturehash4Player(String playername){
+		
+		Entry<String, TextureType> entry = SAVED_TEXTURES.entrySet().stream().filter(k -> k.getKey() == playername).findAny().orElse(null);
+		
+		if(entry == null) return TextureType.OMNIBLOCK_DEFAULT.getPack().getName();
+		else return entry.getValue().getPack().getName();
 		
 	}
 	
@@ -347,48 +373,6 @@ public class PacketsTools {
 				
 			}
 		}
-		
-	}
-	
-	/**
-	 * 
-	 * Con este metodo se enviará información al servidor de la data
-	 * recolectada por el OmniCore sobre los lobbies disponibles en
-	 * cierta modalidad. Este metodo es en respuesta al pedido que
-	 * genera un jugador por medio del servidor y es con el fin de
-	 * recibir el listado y ser representado por medio de una
-	 * GUI interactiva.
-	 * 
-	 * @param player El jugador al cual se le enviarán las lobbies.
-	 * @param data La data de las lobbies que se le enviarán al jugador.
-	 */
-	public static void sendLobbies2Player(String player, String data) {
-		
-		if(data.contains("*")){
-			
-			ProxiedPlayer target = ProxyServer.getInstance().getPlayer(player);
-			
-			if(target != null) {
-				if(target.isConnected()) {
-					
-					if(SOCKET_PORTS.containsKey(target.getServer().getInfo().getName())){
-						
-						Packets.STREAMER.streamPacket(new ResposePlayerGameLobbiesPacket()
-				    			.setPlayername(player)
-				    			.setServers(data)
-				    			.build().setReceiver(SOCKET_PORTS.get(target.getServer().getInfo().getName()))
-				    			);
-						return;
-						
-					}
-					
-				}
-			}
-			
-		}
-		
-		sendMessage2Player(player, "&cEl sistema de lobbies está deshabilitado actualmente.");
-		return;
 		
 	}
 	

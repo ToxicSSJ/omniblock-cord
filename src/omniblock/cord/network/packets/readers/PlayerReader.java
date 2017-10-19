@@ -10,7 +10,7 @@ import net.omniblock.packets.network.structure.packet.PlayerSendBanPacket;
 import net.omniblock.packets.network.structure.packet.PlayerSendKickPacket;
 import net.omniblock.packets.network.structure.packet.PlayerSendMessagePacket;
 import net.omniblock.packets.network.structure.packet.PlayerSendTexturepackPacket;
-import net.omniblock.packets.network.structure.packet.PlayerSendToServerPacket;
+import net.omniblock.packets.network.structure.packet.PlayerSendToNamedServerPacket;
 import net.omniblock.packets.network.tool.object.PacketReader;
 import omniblock.cord.network.packets.PacketsTools;
 
@@ -40,10 +40,10 @@ public class PlayerReader {
 			
 		});
 		
-		Packets.READER.registerReader(new PacketReader<PlayerSendToServerPacket>(){
+		Packets.READER.registerReader(new PacketReader<PlayerSendToNamedServerPacket>(){
 
 			@Override
-			public void readPacket(PacketSocketData<PlayerSendToServerPacket> packetsocketdata) {
+			public void readPacket(PacketSocketData<PlayerSendToNamedServerPacket> packetsocketdata) {
 				
 				PacketStructure structure = packetsocketdata.getStructure();
 				
@@ -57,8 +57,8 @@ public class PlayerReader {
 			}
 
 			@Override
-			public Class<PlayerSendToServerPacket> getAttachedPacketClass() {
-				return PlayerSendToServerPacket.class;
+			public Class<PlayerSendToNamedServerPacket> getAttachedPacketClass() {
+				return PlayerSendToNamedServerPacket.class;
 			}
 			
 		});

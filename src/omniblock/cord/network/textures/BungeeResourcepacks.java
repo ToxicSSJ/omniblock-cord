@@ -166,8 +166,8 @@ public abstract class BungeeResourcepacks {
                 ResourcePackSendPacket packet = new ResourcePackSendPacket(pack.getUrl(), pack.getHash());
                 player.unsafe().sendPacket(packet);
                 sendPackInfo(player, pack);
-            } catch(BadPacketException e) {
-            } catch(ClassCastException e) {
+            } catch(BadPacketException e) { e.printStackTrace();
+            } catch(ClassCastException e) { e.printStackTrace();
             }
         } else {
         }

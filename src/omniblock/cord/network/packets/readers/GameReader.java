@@ -13,13 +13,6 @@ public class GameReader {
 
 	public static void start() {
 		
-		/*
-		 * 
-		 * Con este reader se logra reenviar una
-		 * información de inicialización de juego
-		 * a cierto servidor tipo juego.
-		 * 
-		 */
 		Packets.READER.registerReader(new PacketReader<GameInitializerInfoPacket>(){
 
 			@Override
@@ -27,17 +20,21 @@ public class GameReader {
 				
 				PacketStructure structure = packetsocketdata.getStructure();
 				
-				GamePreset gamepreset = GamePreset.valueOf(structure.get(DataType.STRINGS, "gamepreset"));
+				String gamepreset = structure.get(DataType.STRINGS, "gamepreset");
 				String servername = structure.get(DataType.STRINGS, "servername");
+				String data = structure.get(DataType.STRINGS, "data");
 				
 				Integer socketport = structure.get(DataType.INTEGERS, "socketport");
 				
 				Packets.STREAMER.streamPacket(new GameInitializerInfoPacket()
-            			.setGamepreset(gamepreset)
-            			.setSocketport(socketport)
-            			.setServername(servername)
-            			.build().setReceiver(PacketsTools.SOCKET_PORTS.get(servername))
-            			);
+						
+						.setData(data)
+						.setGamepreset(GamePreset.valueOf(gamepreset))
+						.setServername(servername)
+						.setSocketport(socketport)
+						
+						.build().setReceiver(PacketsTools.SOCKET_PORTS.get(servername)));
+				
 				return;
 				
 			}

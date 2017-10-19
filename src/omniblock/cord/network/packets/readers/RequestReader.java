@@ -5,8 +5,9 @@ import net.omniblock.packets.network.structure.data.PacketSocketData;
 import net.omniblock.packets.network.structure.data.PacketStructure;
 import net.omniblock.packets.network.structure.data.PacketStructure.DataType;
 import net.omniblock.packets.network.structure.packet.RequestBoostedGamesPacket;
-import net.omniblock.packets.network.structure.packet.RequestPlayerGameLobbyServersPacket;
 import net.omniblock.packets.network.structure.packet.RequestPlayerStartNetworkBoosterPacket;
+import net.omniblock.packets.network.structure.packet.RequestTexturepackPacket;
+import net.omniblock.packets.network.structure.packet.ResposeTexturepackPacket;
 import net.omniblock.packets.network.tool.object.PacketReader;
 import omniblock.cord.network.packets.PacketsTools;
 
@@ -39,28 +40,6 @@ public class RequestReader {
 			
 		});
 		
-		Packets.READER.registerReader(new PacketReader<RequestPlayerGameLobbyServersPacket>(){
-
-			@Override
-			public void readPacket(PacketSocketData<RequestPlayerGameLobbyServersPacket> packetsocketdata) {
-				
-				PacketStructure structure = packetsocketdata.getStructure();
-				
-				String playername = structure.get(DataType.STRINGS, "playername");
-				String data = structure.get(DataType.STRINGS, "data");
-				
-				PacketsTools.sendLobbies2Player(playername, data);
-				return;
-				
-			}
-
-			@Override
-			public Class<RequestPlayerGameLobbyServersPacket> getAttachedPacketClass() {
-				return RequestPlayerGameLobbyServersPacket.class;
-			}
-			
-		});
-		
 		Packets.READER.registerReader(new PacketReader<RequestBoostedGamesPacket>(){
 
 			@Override
@@ -78,6 +57,35 @@ public class RequestReader {
 			@Override
 			public Class<RequestBoostedGamesPacket> getAttachedPacketClass() {
 				return RequestBoostedGamesPacket.class;
+			}
+			
+		});
+		
+		Packets.READER.registerReader(new PacketReader<RequestTexturepackPacket>(){
+
+			@Override
+			public void readPacket(PacketSocketData<RequestTexturepackPacket> packetsocketdata) {
+				
+				PacketStructure structure = packetsocketdata.getStructure();
+				
+				String servername = structure.get(DataType.STRINGS, "servername");
+				String playername = structure.get(DataType.STRINGS, "playername");
+				
+				String resourcetype = PacketsTools.getTexturehash4Player(playername);
+				
+				Packets.STREAMER.streamPacket(new ResposeTexturepackPacket()
+						
+						.setResourcetype(resourcetype).build()
+						
+						.setPacketUUID(packetsocketdata.getPacketUUID())
+						.setReceiver(PacketsTools.SOCKET_PORTS.get(servername)));
+				return;
+				
+			}
+
+			@Override
+			public Class<RequestTexturepackPacket> getAttachedPacketClass() {
+				return RequestTexturepackPacket.class;
 			}
 			
 		});

@@ -78,6 +78,7 @@ public class OmniCord extends Plugin {
     }
     
     public void Implements() {
+    	
     	Database.makeConnection();
     	BungeeResourcepacks.setup();
     	
@@ -87,6 +88,7 @@ public class OmniCord extends Plugin {
     	
     	TABPatcher.setup();
     	ResolverListener.setup();
+    	
     }
 
     public void Commands() {
