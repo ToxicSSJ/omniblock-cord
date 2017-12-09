@@ -1,7 +1,8 @@
 package omniblock.cord.util.lib.textures;
 
-import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by Phoenix616 on 06.03.2017.
@@ -11,6 +12,20 @@ public class PackAssignment {
     private String pack = null;
     private LinkedHashSet<String> secondaries = new LinkedHashSet<>();
     private long sendDelay = -1;
+    private Pattern regex = null;
+    private final String name;
+
+    public PackAssignment(String name) {
+        this.name = name;
+    }
+
+    public PackAssignment(PackAssignment assignment) {
+        this(assignment.getName());
+        this.pack = assignment.getPack();
+        this.secondaries = assignment.getSecondaries();
+        this.sendDelay = assignment.getSendDelay();
+        this.regex = assignment.getRegex();
+    }
 
     /**
      * Set the main pack of this assignment
@@ -125,14 +140,37 @@ public class PackAssignment {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(getClass().getSimpleName()).append("{")
-                .append("pack=").append(pack)
-                .append(", secondaries=[");
-        for (Iterator<String> it = secondaries.iterator(); it.hasNext();) {
-            s.append(it.next());
-            if (it.hasNext()) {
-                s.append(", ");
-            }
+                .append("name=").append(getName())
+                .append(", pack=").append(getPack())
+                .append(", secondaries=[").append(getSecondaries().stream().collect(Collectors.joining(", ")))
+                .append("], sendDelay=").append(getSendDelay());
+        if (getRegex() != null) {
+            s.append(", regex=").append(getRegex().toString());
         }
-        return s.append("], sendDelay=").append(sendDelay).append("}").toString();
+        return s.append("}").toString();
+    }
+
+    /**
+     * Set the key name regex of this assignment
+     * @param regex The compiled Pattern of this regex
+     */
+    public void setRegex(Pattern regex) {
+        this.regex = regex;
+    }
+
+    /**
+     * Get the compiled Pattern of this assignment's key regex
+     * @return The compiled regex pattern or <tt>null</tt> if none is set and the key should be used literally
+     */
+    public Pattern getRegex() {
+        return regex;
+    }
+
+    /**
+     * Get the name of this assignment
+     * @return  The name of this assignment
+     */
+    public String getName() {
+        return name;
     }
 }

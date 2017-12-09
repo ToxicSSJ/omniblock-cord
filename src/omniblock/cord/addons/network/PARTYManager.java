@@ -328,7 +328,7 @@ public class PARTYManager implements Listener {
 					}
 					
 					ACTIVED_REQUESTS.remove((ProxiedPlayer) sender);
-					sender.sendMessage(TextUtil.format("&cEstá petición ya a expirado."));
+					sender.sendMessage(TextUtil.format("&cEstá petición ya ha expirado."));
 					return;
 					
 				}
@@ -350,7 +350,7 @@ public class PARTYManager implements Listener {
 					}
 					
 					ACTIVED_REQUESTS.remove((ProxiedPlayer) sender);
-					sender.sendMessage(TextUtil.format("&cEstá petición ya a expirado."));
+					sender.sendMessage(TextUtil.format("&cEsta petición ya ha expirado."));
 					return;
 					
 				}
@@ -379,7 +379,7 @@ public class PARTYManager implements Listener {
 			
 		}
 		
-		TextComponent message = new TextComponent(TextUtil.format(" &8» &7Para obtener toda la información de comandos sobre las &7parties por favor ejecuta el siguiente comando: "));
+		TextComponent message = new TextComponent(TextUtil.format(" &8» &7Para obtener toda la información de comandos sobre las parties por favor ejecuta el siguiente comando: "));
 		TextComponent command = new TextComponent(TextUtil.format("&b/party ayuda"));
 		
 		command.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(TextUtil.format("&6&lClick&7 para ejecutar el comando!")).create()));
@@ -457,7 +457,7 @@ public class PARTYManager implements Listener {
 		 * @param owner El dueño de la party.
 		 * @param member Nombre del miembro que se quiere expulsar.
 		 */
-		@SuppressWarnings("deprecation")
+		@SuppressWarnings({ "deprecation", "unlikely-arg-type" })
 		public static void kickParty(ProxiedPlayer owner, String member){
 			
 			if(!ACTIVED_PARTIES.containsKey(owner.getName())) return;
@@ -827,7 +827,7 @@ public class PARTYManager implements Listener {
 			deny.setClickEvent(new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/party deny" ));
 			
 			message.addExtra(accept);
-			message.addExtra(TextUtil.format("&8&l|&r        "));
+			message.addExtra(TextUtil.format("     &8&l|&r     "));
 			message.addExtra(deny);
 			
 			member.sendMessage("");

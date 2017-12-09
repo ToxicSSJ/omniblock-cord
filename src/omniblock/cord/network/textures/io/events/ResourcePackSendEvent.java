@@ -1,4 +1,4 @@
-package omniblock.cord.network.textures.events;
+package omniblock.cord.network.textures.io.events;
 
 import net.md_5.bungee.api.plugin.Cancellable;
 import net.md_5.bungee.api.plugin.Event;

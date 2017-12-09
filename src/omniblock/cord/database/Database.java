@@ -21,6 +21,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import omniblock.cord.OmniCord;
+import omniblock.cord.database.sql.type.TableType;
 
 public class Database {
 	
@@ -62,11 +63,12 @@ public class Database {
 		}
 		
 		if(host != null && port != 0 && user != null && pass != null && database != null){
+			
 			console.sendMessage(new ComponentBuilder("Host: ").color(ChatColor.AQUA).append(host).color(ChatColor.WHITE).create());
 			console.sendMessage(new ComponentBuilder("Puerto: ").color(ChatColor.AQUA).append(String.valueOf(port)).color(ChatColor.WHITE).create());
 			console.sendMessage(new ComponentBuilder("Base de Datos: ").color(ChatColor.AQUA).append(database).color(ChatColor.WHITE).create());
 			console.sendMessage(new ComponentBuilder("Usuario: ").color(ChatColor.AQUA).append(user).color(ChatColor.WHITE).create());
-			console.sendMessage(new ComponentBuilder("Contraseña: ").color(ChatColor.AQUA).append("<Por seguridad no se muestra>").color(ChatColor.WHITE).create());
+			console.sendMessage(new ComponentBuilder("Contraseña: ").color(ChatColor.AQUA).append("●●●●●●●●●●").color(ChatColor.WHITE).create());
 			console.sendMessage(new ComponentBuilder("Estableciendo conexión ... ").color(ChatColor.YELLOW).create());
 			
 			String URL = "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true";
@@ -80,23 +82,31 @@ public class Database {
 				
 				Statement stm = conn.createStatement();
 				for(TableType table : TableType.values()){
-					table.make(stm);
+					table.getCreator().make(stm);
 				}
 				
 				stm.close();
 				return true;
 				
 			} catch (SQLException e) {
+				
 				console.sendMessage(new ComponentBuilder("Error al establecer conexión ...").color(ChatColor.RED).create());
 				e.printStackTrace();
 				return false;
+				
 			}
-		}else{
-			console.sendMessage(new ComponentBuilder("Error al establecer conexión ... Verifica que todos los datos estén bien configurados.").color(ChatColor.RED).create());			return false;
+			
+		} else {
+			
+			console.sendMessage(new ComponentBuilder("Error al establecer conexión ... Verifica que todos los datos estén bien configurados.").color(ChatColor.RED).create());			
+			return false;
+			
 		}
+		
 	}
 	
 	public static Connection getConnection(){
 		return conn;
 	}
+	
 }

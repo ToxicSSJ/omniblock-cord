@@ -31,7 +31,7 @@ import omniblock.cord.addons.resolver.ResolverListener;
 import omniblock.cord.database.Database;
 import omniblock.cord.network.core.io.TABPatcher;
 import omniblock.cord.network.packets.PacketsAdapter;
-import omniblock.cord.network.textures.BungeeResourcepacks;
+import omniblock.cord.network.textures.io.BungeeResourcepacks;
 
 public class OmniCord extends Plugin {
 	
@@ -45,6 +45,8 @@ public class OmniCord extends Plugin {
     	
     	OmniPackets.setupSystem(SystemType.OMNICORD);
     	PacketsAdapter.registerReaders();
+    	
+    	BungeeResourcepacks.start();
     	
     	Sockets.SERVER.startServer(SocketHelper.OMNICORD_SOCKET_PORT);
     	
@@ -66,7 +68,7 @@ public class OmniCord extends Plugin {
 		System.out.println(".   ;   /  ` ;				OmniCord		");
 		System.out.println(";   |  ; \\ ; | 		  OmniBlock Network");
 		System.out.println("|   :  | ; | ' 			");
-		System.out.println(".   |  ' ' ' : 			      MODE: BETA");
+		System.out.println(".   |  ' ' ' : 			      MODO: BETA");
 		System.out.println("'   ;  \\; /  | 		     VERSION: 4.2	");
 		System.out.println(" \\   \\  ',  /  ");
 		System.out.println("  ;   :    /   ");
@@ -80,7 +82,6 @@ public class OmniCord extends Plugin {
     public void Implements() {
     	
     	Database.makeConnection();
-    	BungeeResourcepacks.setup();
     	
     	MOTDManager.start();
     	TABManager.start();

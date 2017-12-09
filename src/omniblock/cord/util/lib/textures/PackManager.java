@@ -2,7 +2,9 @@ package omniblock.cord.util.lib.textures;
 
 import com.google.common.io.BaseEncoding;
 
-import omniblock.cord.network.textures.BungeeResourcepacks;
+import omniblock.cord.OmniCord;
+import omniblock.cord.network.packets.PacketsTools;
+import omniblock.cord.network.textures.io.TextureType;
 import omniblock.cord.util.lib.textures.events.IResourcePackSelectEvent;
 import omniblock.cord.util.lib.textures.events.IResourcePackSendEvent;
 
@@ -12,44 +14,67 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Created by Phoenix616 on 25.03.2015.
  */
 public class PackManager {
-	
+
+    private final ResourcepacksPlugin plugin;
     /**
      * packname -> ResourcePack
      */
-    private Map<String, ResourcePack> packNames = new LinkedHashMap<>();
+    private Map<String, ResourcePack> packNames = new HashMap<String, ResourcePack>();
 
     /**
      * packhash -> packname 
      */
-    private Map<String, ResourcePack> packHashes = new HashMap<>();
+    private Map<String, ResourcePack> packHashes = new HashMap<String, ResourcePack>();
     
     /**
      * packurl -> packname 
      */
-    private Map<String, ResourcePack> packUrls = new HashMap<>();
+    private Map<String, ResourcePack> packUrls = new HashMap<String, ResourcePack>();
 
     /**
      * The empty pack, null if none is set
      */
-    private ResourcePack empty = null;
+    private ResourcePack empty = TextureType.OMNIBLOCK_DEFAULT.getPack();
     
     /**
      * Name of the global pack, null if none is set
      */
-    private PackAssignment global = new PackAssignment();
+    private PackAssignment global = new PackAssignment("global");
     
     /**
-     * servername -> pack assignment
+     * server-/worldname -> pack assignment
      */
-    private Map<String, PackAssignment> servers = new HashMap<>();
+    private Map<String, PackAssignment> literalAssignments;
+
+    /**
+     * server-/worldname -> pack assignment
+     */
+    private Map<String, PackAssignment> regexAssignments;
 
 
-    public PackManager() {
+    public PackManager(ResourcepacksPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    /**
+     * Initialize this pack manager
+     */
+    public void init() {
+        packNames = new LinkedHashMap<>();
+        packHashes = new HashMap<>();
+        packUrls = new HashMap<>();
+        empty = null;
+        global = new PackAssignment("global");
+        literalAssignments = new HashMap<>();
+        regexAssignments = new LinkedHashMap<>();
     }
 
     /**
@@ -243,7 +268,7 @@ public class PackManager {
      */
     @Deprecated
     public ResourcePack getUserPack(UUID playerid) {
-        return BungeeResourcepacks.getUserManager().getUserPack(playerid);
+        return plugin.getUserManager().getUserPack(playerid);
     }
     
     /**
@@ -255,7 +280,7 @@ public class PackManager {
      */
     @Deprecated
     public ResourcePack setUserPack(UUID playerid, ResourcePack pack) {
-        return BungeeResourcepacks.getUserManager().setUserPack(playerid, pack);
+        return plugin.getUserManager().setUserPack(playerid, pack);
     }
 
     /**
@@ -266,7 +291,7 @@ public class PackManager {
      */
     @Deprecated
     public ResourcePack clearUserPack(UUID playerid) {
-        return BungeeResourcepacks.getUserManager().clearUserPack(playerid);
+        return plugin.getUserManager().clearUserPack(playerid);
     }
     
 
@@ -299,12 +324,14 @@ public class PackManager {
 
     /**
      * Add a new assignment to a server/world
-     * @param server        The name of the server/world
      * @param assignment    The new PackAssignment
      * @return              The previous assignment or null if there was none
      */
-    public PackAssignment addAssignment(String server, PackAssignment assignment) {
-        return servers.put(server.toLowerCase(), assignment);
+    public PackAssignment addAssignment(PackAssignment assignment) {
+        if (assignment.getRegex() != null) {
+            return regexAssignments.put(assignment.getName().toLowerCase(), assignment);
+        }
+        return literalAssignments.put(assignment.getName().toLowerCase(), assignment);
     }
 
     /**
@@ -313,10 +340,78 @@ public class PackManager {
      * @return          The PackAssignment; an empty one if there is none
      */
     public PackAssignment getAssignment(String server) {
-        PackAssignment assignment = servers.get(server.toLowerCase());
-        if (assignment == null) {
-            assignment = new PackAssignment();
-            addAssignment(server, assignment);
+        PackAssignment assignment = literalAssignments.get(server.toLowerCase());
+        if (assignment != null) {
+            return assignment;
+        }
+        for (PackAssignment regexAssignment : regexAssignments.values()) {
+            if (regexAssignment.getRegex().matcher(server).matches()) {
+                return regexAssignment;
+            }
+        }
+        return new PackAssignment("empty");
+    }
+
+    /**
+     * Load an assignment from a map representing the section in the config
+     * @param name      The name of the assignment
+     * @param config    A map representing the config section
+     * @return          The PackAssignment
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public PackAssignment loadAssignment(String name, Map<String, Object> config) {
+        PackAssignment assignment = new PackAssignment(name);
+        if (config.get("regex") != null) {
+            if (!(config.get("regex") instanceof String)) {
+            	OmniCord.getInstance().getLogger().log(Level.WARNING, "'regex' option has to be a String!");
+            } else {
+                try {
+                    assignment.setRegex(Pattern.compile(((String) config.get("regex"))));
+                    OmniCord.getInstance().getLogger().log(Level.INFO, "Regex: " + assignment.getRegex().toString());
+                } catch (PatternSyntaxException e) {
+                   OmniCord.getInstance().getLogger().log(Level.WARNING, "The assignment's regex '" + config.get("regex") + "' isn't valid! Using the key name literally! (" + e.getMessage() + ")");
+                }
+            }
+        }
+        if(config.get("pack") != null) {
+            if (!(config.get("pack") instanceof String)) {
+               OmniCord.getInstance().getLogger().log(Level.WARNING, "'pack' option has to be a String!");
+            } else if (!((String) config.get("pack")).isEmpty()) {
+                ResourcePack pack = getByName((String) config.get("pack"));
+                if (pack != null) {
+                    assignment.setPack(pack);
+                   OmniCord.getInstance().getLogger().log(Level.INFO, "Pack: " + pack.getName());
+                } else {
+                   OmniCord.getInstance().getLogger().log(Level.WARNING, "No pack with the name " + config.get("pack") + " defined?");
+                }
+            }
+        }
+        if(config.get("secondary") != null) {
+            if (!(config.get("secondary") instanceof List)
+                    || !((List) config.get("secondary")).isEmpty()
+                    && !(((List) config.get("secondary")).get(0) instanceof String)){
+               OmniCord.getInstance().getLogger().log(Level.WARNING, "'secondary' option has to be a String List!");
+            } else {
+               OmniCord.getInstance().getLogger().log(Level.INFO, "Secondary packs:");
+                List<String> secondary = (List<String>) config.get("secondary");
+                for(String secondaryPack : secondary) {
+                    ResourcePack pack = getByName(secondaryPack);
+                    if (pack != null) {
+                        assignment.addSecondary(pack);
+                       OmniCord.getInstance().getLogger().log(Level.INFO, "- " + pack.getName());
+                    } else {
+                       OmniCord.getInstance().getLogger().log(Level.WARNING, "No pack with the name " + config.get("pack") + " defined?");
+                    }
+                }
+            }
+        }
+        if (config.get("send-delay") != null) {
+            if (!(config.get("send-delay") instanceof Number)) {
+               OmniCord.getInstance().getLogger().log(Level.WARNING, "'send-delay' option has to be a number!");
+            } else {
+                assignment.setSendDelay(((Number) config.get("send-delay")).longValue());
+               OmniCord.getInstance().getLogger().log(Level.INFO, "Send delay: " + assignment.getSendDelay());
+            }
         }
         return assignment;
     }
@@ -326,8 +421,22 @@ public class PackManager {
      * @param server The server the pack should get removed from
      * @return True if the server had a pack, false if not
      */
+    @Deprecated
     public boolean removeServer(String server) {
-        return servers.remove(server.toLowerCase()) != null;
+        return removeAssignment(server);
+    }
+
+    /**
+     * Removes the assignment of a server/world
+     * @param key   The name of the server/world the pack should get removed from
+     * @return True if there was a pack for that key, false if not
+     */
+    public boolean removeAssignment(String key) {
+        if (literalAssignments.remove(key.toLowerCase()) != null) {
+            regexAssignments.remove(key);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -391,26 +500,77 @@ public class PackManager {
 
     /**
      * Set the pack of a player and send it to him, calls a ResourcePackSendEvent
-     * @param playerId The UUID of the player to set the pack for
-     * @param pack The ResourcePack to set, if it is null it will reset to empty if the player has a pack applied
+     * @param playerId  The UUID of the player to set the pack for
+     * @param pack      The ResourcePack to set, if it is null it will reset to empty if the player has a pack applied
+     * @return <tt>true</tt> if the pack was set; <tt>false</tt> if not
      */
-    public void setPack(UUID playerId, ResourcePack pack) {
-        ResourcePack prev = BungeeResourcepacks.getUserManager().getUserPack(playerId);
+    public boolean setPack(String playername, UUID playerId, ResourcePack pack) {
+        return setPack(playername, playerId, pack, true);
+    }
+
+    /**
+     * Set the pack of a player and send it to him, calls a ResourcePackSendEvent
+     * @param playerId  The UUID of the player to set the pack for
+     * @param pack      The ResourcePack to set, if it is null it will reset to empty if the player has a pack applied
+     * @param temporary Should the pack be removed on log out or stored?
+     * @return <tt>true</tt> if the pack was set; <tt>false</tt> if not
+     */
+    public boolean setPack(String playername, UUID playerId, ResourcePack pack, boolean temporary) {
+    	
+    	System.out.println("Passing! x 0");
+    	
+        ResourcePack prev = TextureType.OMNIBLOCK_DEFAULT.getPack();
+        
+        System.out.println("Passing! x 1");
+        
+        if(plugin.getUserManager() != null)
+        	if(plugin.getUserManager().getUserPack(playerId) != null)
+        		prev = plugin.getUserManager().getUserPack(playerId);
+        else
+        	if(PacketsTools.SAVED_TEXTURES.containsKey(playername))
+        		prev = PacketsTools.SAVED_TEXTURES.get(playername).getPack();
+        	
+        if (!temporary) {
+            plugin.setStoredPack(playerId, pack.equals(getEmptyPack()) ? null : pack.getName());
+        }
+        
+        System.out.println("next -> " + pack.getName());
+        System.out.println("previusly -> " + prev.getName());
+        
         if (pack != null && pack.equals(prev)) {
-            return;
+            return false;
         }
-        IResourcePackSendEvent sendEvent = BungeeResourcepacks.callPackSendEvent(playerId, pack);
+        
+        System.out.println("Passing! x 2");
+        
+        IResourcePackSendEvent sendEvent = plugin.callPackSendEvent(playerId, pack);
         if (sendEvent.isCancelled()) {
-            return;
+           OmniCord.getInstance().getLogger().log(Level.INFO, "Pack send event for " + playerId + " was cancelled!");
+           return false;
         }
+        
+        System.out.println("Passing! x 3");
+        
         pack = sendEvent.getPack();
-        if (pack == null && prev != null && !prev.equals(getEmptyPack())) {
+        
+        if (pack == null) {
+            pack = getByName(plugin.getStoredPack(playerId));
+            if (pack != null) {
+               OmniCord.getInstance().getLogger().log(Level.INFO, playerId + " has the pack " + pack.getName() + " stored!");
+            }
+        }
+        
+        if (pack == null && prev != null) {
             pack = getEmptyPack();
         }
+        
         if (pack != null && !pack.equals(prev)) {
-            BungeeResourcepacks.getUserManager().setUserPack(playerId, pack);
-            BungeeResourcepacks.sendPack(playerId, pack);
+        	System.out.println("Passing! x 8");
+            plugin.getUserManager().setUserPack(playerId, pack);
+            plugin.sendPack(playerId, pack);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -418,9 +578,9 @@ public class PackManager {
      * @param playerId      The UUID of the player
      * @param serverName    The name of the server/world
      */
-    public void applyPack(UUID playerId, String serverName) {
+    public void applyPack(String playername, UUID playerId, String serverName) {
         ResourcePack pack = getApplicablePack(playerId, serverName);
-        setPack(playerId, pack);
+        setPack(playername, playerId, pack);
     }
 
     /**
@@ -430,43 +590,53 @@ public class PackManager {
      * @return The pack for that server; <tt>null</tt> if he should have none
      */
     public ResourcePack getApplicablePack(UUID playerId, String serverName) {
-        ResourcePack prev = BungeeResourcepacks.getUserManager().getUserPack(playerId);
+        ResourcePack prev = plugin.getUserManager().getUserPack(playerId);
         ResourcePack pack = null;
+        ResourcepacksPlayer player = plugin.getPlayer(playerId);
+        if (player == null) {
+            player = new ResourcepacksPlayer("uuid:" + playerId, playerId);
+        }
         IResourcePackSelectEvent.Status status = IResourcePackSelectEvent.Status.UNKNOWN;
-        if(isGlobalSecondary(prev) && checkPack(playerId, prev, IResourcePackSelectEvent.Status.SUCCESS) == IResourcePackSelectEvent.Status.SUCCESS) {
+        if(getGlobalAssignment().isSecondary(prev) && checkPack(playerId, prev, IResourcePackSelectEvent.Status.SUCCESS) == IResourcePackSelectEvent.Status.SUCCESS) {
+           OmniCord.getInstance().getLogger().log(Level.INFO, player.getName() + " matched global assignment");
             return prev;
         }
         if(serverName != null && !serverName.isEmpty()) {
-            if(isServerSecondary(serverName, prev) && checkPack(playerId, prev, IResourcePackSelectEvent.Status.SUCCESS) == IResourcePackSelectEvent.Status.SUCCESS) {
+            PackAssignment assignment = getAssignment(serverName);
+            if(assignment.isSecondary(prev) && checkPack(playerId, prev, IResourcePackSelectEvent.Status.SUCCESS) == IResourcePackSelectEvent.Status.SUCCESS) {
+               OmniCord.getInstance().getLogger().log(Level.INFO, player.getName() + " matched assignment " + assignment.getName());
                 return prev;
             }
-            ResourcePack serverPack = getServerPack(serverName);
+            ResourcePack serverPack = getByName(assignment.getPack());
             status = checkPack(playerId, serverPack, status);
             if(status == IResourcePackSelectEvent.Status.SUCCESS) {
                 pack = serverPack;
+               OmniCord.getInstance().getLogger().log(Level.INFO, player.getName() + " matched assignment " + assignment.getName());
             } else if(prev != null || serverPack != null){
-                List<String> serverSecondary = getServerSecondary(serverName);
-                for(String secondaryName : serverSecondary) {
+                for(String secondaryName : assignment.getSecondaries()) {
                     ResourcePack secondaryPack = getByName(secondaryName);
                     status = checkPack(playerId, secondaryPack, status);
                     if(status == IResourcePackSelectEvent.Status.SUCCESS) {
                         pack = secondaryPack;
+                       OmniCord.getInstance().getLogger().log(Level.INFO, player.getName() + " matched assignment " + assignment.getName());
                         break;
                     }
                 }
             }
         }
         if(pack == null) {
-            ResourcePack globalPack = getGlobalPack();
+            ResourcePack globalPack = getByName(getGlobalAssignment().getPack());
             status = checkPack(playerId, globalPack, status);
             if(status == IResourcePackSelectEvent.Status.SUCCESS) {
                 pack = globalPack;
+               OmniCord.getInstance().getLogger().log(Level.INFO, player.getName() + " matched global assignment");
             } else if(prev != null || globalPack != null){
                 List<String> globalSecondary = getGlobalSecondary();
                 for(String secondaryName : globalSecondary) {
                     ResourcePack secondaryPack = getByName(secondaryName);
                     status = checkPack(playerId, secondaryPack, status);
                     if(status == IResourcePackSelectEvent.Status.SUCCESS) {
+                       OmniCord.getInstance().getLogger().log(Level.INFO, player.getName() + " matched global assignment");
                         pack = secondaryPack;
                         break;
                     }
@@ -478,7 +648,7 @@ public class PackManager {
             status = IResourcePackSelectEvent.Status.SUCCESS;
         }
 
-        IResourcePackSelectEvent selectEvent = BungeeResourcepacks.callPackSelectEvent(playerId, pack, status);
+        IResourcePackSelectEvent selectEvent = plugin.callPackSelectEvent(playerId, pack, status);
         return selectEvent.getPack();
     }
 
@@ -486,8 +656,8 @@ public class PackManager {
         if(pack == null) {
             return status;
         }
-        boolean rightFormat = pack.getFormat() <= BungeeResourcepacks.getPlayerPackFormat(playerId);
-        boolean hasPermission = !pack.isRestricted() || BungeeResourcepacks.checkPermission(playerId, pack.getPermission());
+        boolean rightFormat = pack.getFormat() <= plugin.getPlayerPackFormat(playerId);
+        boolean hasPermission = !pack.isRestricted() || plugin.checkPermission(playerId, pack.getPermission());
         if(rightFormat && hasPermission) {
             return IResourcePackSelectEvent.Status.SUCCESS;
         }

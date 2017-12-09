@@ -1,5 +1,6 @@
 package omniblock.cord.network.packets;
 
+import omniblock.cord.network.packets.readers.ActionerReader;
 import omniblock.cord.network.packets.readers.GameReader;
 import omniblock.cord.network.packets.readers.PlayerReader;
 import omniblock.cord.network.packets.readers.ProxyReader;
@@ -15,6 +16,7 @@ public class PacketsAdapter {
 		ProxyReader.start();
 		RequestReader.start();
 		ServerReader.start();
+		ActionerReader.start();
 		
 	}
 	

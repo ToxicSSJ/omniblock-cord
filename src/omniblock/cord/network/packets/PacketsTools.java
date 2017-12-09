@@ -329,14 +329,14 @@ public class PacketsTools {
 								return;
 							}
 							
-							SAVED_TEXTURES.put(player, type);
 							type.sendPack(target);
+							SAVED_TEXTURES.put(player, type);
 							return;
 							
 						} else {
 							
-							SAVED_TEXTURES.put(player, type);
 							if(type != TextureType.OMNIBLOCK_DEFAULT) type.sendPack(target);
+							SAVED_TEXTURES.put(player, type);
 							return;
 							
 						}

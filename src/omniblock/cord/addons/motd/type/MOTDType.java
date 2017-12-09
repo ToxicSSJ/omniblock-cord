@@ -14,15 +14,16 @@ import omniblock.cord.addons.motd.object.MOTDPreset;
 public enum MOTDType {
 
 	COMMON_MOTD(new MOTDPreset(
-			"            &9Omniblock Network &7➧ &cBETA CERRADA \n",
-			"            &8&l★ &7¡Proximamente fecha de Apertura! &8&l★")),
+			"       &8&l『 &9&lOmniblock Network &8&l』 &c&lBETA CERRADA   \n",
+			"         &61.9, 1.10, 1.11, 1.12 &8&l| &aProxiamente!")),
+	
 	PROMOTION_MOTD(new MOTDPreset(
-			"            &9Omniblock Network &7➧ &cBETA CERRADA \n",
-			"            &8&l★ &7¡Proximamente fecha de Apertura! &8&l★")),
+			"       &8&l『 &9&lOmniblock Network &8&l』 &c&lBETA CERRADA   \n",
+			"         &61.9, 1.10, 1.11, 1.12 &8&l| &aProxiamente!")),
 	
 	MAINTENACE(new MOTDPreset(
-			"            &9Omniblock Network &7➧ &cBETA CERRADA \n",
-			"            &8&l★ &7¡Proximamente fecha de Apertura! &8&l★")),
+			"       &8&l『 &9&lOmniblock Network &8&l』 &c&lBETA CERRADA   \n",
+			"         &61.9, 1.10, 1.11, 1.12 &8&l| &aProxiamente!")),
 	
 	;
 	

@@ -6,7 +6,6 @@ import java.util.UUID;
  * Created by Phoenix616 on 03.02.2016.
  */
 public class ResourcepacksPlayer {
-	
     private String name;
     private UUID uniqueId;
 

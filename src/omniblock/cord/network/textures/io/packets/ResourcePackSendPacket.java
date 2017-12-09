@@ -1,4 +1,4 @@
-package omniblock.cord.network.textures.packets;
+package omniblock.cord.network.textures.io.packets;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
@@ -9,12 +9,14 @@ import net.md_5.bungee.connection.DownstreamBridge;
 import net.md_5.bungee.protocol.AbstractPacketHandler;
 import net.md_5.bungee.protocol.DefinedPacket;
 import net.md_5.bungee.protocol.PacketWrapper;
-import omniblock.cord.network.textures.BungeeResourcepacks;
+import omniblock.cord.OmniCord;
+import omniblock.cord.network.textures.io.BungeeResourcepacks;
 import omniblock.cord.util.lib.textures.ResourcePack;
 
 import java.beans.ConstructorProperties;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
 
 /**
  * Created by Phoenix616 on 24.03.2015.
@@ -47,9 +49,11 @@ public class ResourcePackSendPacket extends DefinedPacket {
                     UserConnection usercon = (UserConnection) con.get(bridge);
                     relayPacket(usercon, new PacketWrapper(this, Unpooled.copiedBuffer(ByteBuffer.allocate(Integer.toString(this.getUrl().length()).length()))));
                 } catch (IllegalAccessException e) {
+                	OmniCord.getInstance().getLogger().log(Level.WARNING, "Sorry but you are not allowed to do this.");
                     e.printStackTrace();
                 }
             } catch (NoSuchFieldException e) {
+            	OmniCord.getInstance().getLogger().log(Level.SEVERE, "Error while trying to get the UserConnection field from the DownstreamBridge object. Is the plugin up to date?");
             }
         } else {
             throw new UnsupportedOperationException("Only players can receive ResourcePackSend packets!");
@@ -57,21 +61,24 @@ public class ResourcePackSendPacket extends DefinedPacket {
     }
     
     public void relayPacket(UserConnection usercon, PacketWrapper packet) throws Exception {
-    	
-    	ResourcePack pack = BungeeResourcepacks.getPackManager().getByHash(getHash());
+        BungeeResourcepacks plugin = BungeeResourcepacks.getInstance();
+        
+        ResourcePack pack = plugin.getPackManager().getByHash(getHash());
         if (pack == null) {
-            pack = BungeeResourcepacks.getPackManager().getByUrl(getUrl());
+            pack = plugin.getPackManager().getByUrl(getUrl());
         }
         if (pack == null) {
             pack = new ResourcePack("backend-" + getUrl().substring(getUrl().lastIndexOf('/') + 1, getUrl().length()).replace(".zip", "").toLowerCase(), getUrl(), getHash());
             try {
-            	BungeeResourcepacks.getPackManager().addPack(pack);
+                plugin.getPackManager().addPack(pack);
             } catch (IllegalArgumentException e) {
-                pack = BungeeResourcepacks.getPackManager().getByUrl(getUrl());
+                // Can only happen when pack was gotten by hash but another pack had the same url
+                pack = plugin.getPackManager().getByUrl(getUrl());
             }
         }
-        BungeeResourcepacks.setBackend(usercon.getUniqueId());
-        BungeeResourcepacks.getUserManager().setUserPack(usercon.getUniqueId(), pack);
+        plugin.setBackend(usercon.getUniqueId());
+        OmniCord.getInstance().getLogger().log(BungeeResourcepacks.getInstance().getLogLevel(), "Backend mc server send pack " + pack.getName() + " (" + pack.getUrl() + ") to player " + usercon.getName());
+        plugin.getUserManager().setUserPack(usercon.getUniqueId(), pack);
         
         usercon.getPendingConnection().handle(packet);
     }

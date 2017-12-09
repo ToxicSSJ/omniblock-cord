@@ -1,23 +1,22 @@
-package omniblock.cord.network.textures;
+package omniblock.cord.network.textures.io;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ProxyServer;
+
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.protocol.BadPacketException;
 import net.md_5.bungee.protocol.Protocol;
 import net.md_5.bungee.protocol.ProtocolConstants;
 import omniblock.cord.OmniCord;
-import omniblock.cord.network.textures.events.ResourcePackSelectEvent;
-import omniblock.cord.network.textures.events.ResourcePackSendEvent;
-import omniblock.cord.network.textures.io.TextureType;
-import omniblock.cord.network.textures.listeners.DisconnectListener;
-import omniblock.cord.network.textures.packets.ResourcePackSendPacket;
+import omniblock.cord.network.textures.io.events.ResourcePackSelectEvent;
+import omniblock.cord.network.textures.io.events.ResourcePackSendEvent;
+import omniblock.cord.network.textures.io.listeners.DisconnectListener;
+import omniblock.cord.network.textures.io.packets.ResourcePackSendPacket;
 import omniblock.cord.util.lib.textures.PackManager;
 import omniblock.cord.util.lib.textures.ResourcePack;
 import omniblock.cord.util.lib.textures.ResourcepacksPlayer;
+import omniblock.cord.util.lib.textures.ResourcepacksPlugin;
 import omniblock.cord.util.lib.textures.UserManager;
 import omniblock.cord.util.lib.textures.events.IResourcePackSelectEvent;
 import omniblock.cord.util.lib.textures.events.IResourcePackSendEvent;
@@ -33,9 +32,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-public abstract class BungeeResourcepacks {
+/**
+ * Created by Phoenix616 on 18.03.2015.
+ */
+public class BungeeResourcepacks implements ResourcepacksPlugin {
+
+    private static BungeeResourcepacks instance;
     
     private static PackManager pm;
 
@@ -47,17 +52,28 @@ public abstract class BungeeResourcepacks {
      * Set of uuids of players which got send a pack by the backend server. 
      * This is needed so that the server does not send the bungee pack if the user has a backend one.
      */
-    private static Map<UUID, Boolean> backendPackedPlayers = new ConcurrentHashMap<>();
+    private Map<UUID, Boolean> backendPackedPlayers = new ConcurrentHashMap<>();
 
     /**
      * Set of uuids of players which were authenticated by a backend server's plugin
      */
-    private static Set<UUID> authenticatedPlayers = new HashSet<>();
+    private Set<UUID> authenticatedPlayers = new HashSet<>();
 
     private static int bungeeVersion;
 
-	@SuppressWarnings("unchecked")
-	public static void setup() {
+    @SuppressWarnings("unchecked")
+	public static void start() {
+    	
+        instance = new BungeeResourcepacks();
+        pm = new PackManager(instance);
+        um = new UserManager(instance);
+        
+        for(TextureType textures : TextureType.values()) {
+        	
+        	pm.addPack(textures.getPack());
+        	continue;
+        	
+        }
         
         try {
         	
@@ -67,8 +83,8 @@ public abstract class BungeeResourcepacks {
                 Field svField = Protocol.class.getField("supportedVersions");
                 supportedVersions = (List<Integer>) svField.get(null);
             } catch(Exception e1) {
+                // Old bungee protocol version, try new one
             }
-            
             if(supportedVersions.size() == 0) {
                 Field svIdField = ProtocolConstants.class.getField("SUPPORTED_VERSION_IDS");
                 supportedVersions = (List<Integer>) svIdField.get(null);
@@ -77,62 +93,67 @@ public abstract class BungeeResourcepacks {
             bungeeVersion = supportedVersions.get(supportedVersions.size() - 1);
             
             if(bungeeVersion == ProtocolConstants.MINECRAFT_1_8) {
-            	
+            	OmniCord.getInstance().getLogger().log(Level.INFO, "BungeeCord 1.8 detected!");
                 Method reg = Protocol.DirectionData.class.getDeclaredMethod("registerPacket", int.class, Class.class);
                 reg.setAccessible(true);
                 reg.invoke(Protocol.GAME.TO_CLIENT, 0x48, ResourcePackSendPacket.class);
-                
             } else if(bungeeVersion >= ProtocolConstants.MINECRAFT_1_9 && bungeeVersion < ProtocolConstants.MINECRAFT_1_9_4){
-            	
+            	OmniCord.getInstance().getLogger().log(Level.INFO, "BungeeCord 1.9-1.9.3 detected!");
                 Method reg = Protocol.DirectionData.class.getDeclaredMethod("registerPacket", int.class, int.class, Class.class);
                 reg.setAccessible(true);
                 reg.invoke(Protocol.GAME.TO_CLIENT, 0x48, 0x32, ResourcePackSendPacket.class);
-                
             } else if(bungeeVersion >= ProtocolConstants.MINECRAFT_1_9_4){
-            	
+            	OmniCord.getInstance().getLogger().log(Level.INFO, "BungeeCord 1.9.4+ detected!");
                 Method map = Protocol.class.getDeclaredMethod("map", int.class, int.class);
                 map.setAccessible(true);
-                Object mapping18 = map.invoke(null, ProtocolConstants.MINECRAFT_1_8, 0x48);
-                Object mapping19 = map.invoke(null, ProtocolConstants.MINECRAFT_1_9, 0x32);
-                Object mappingsObject = Array.newInstance(mapping18.getClass(), 2);
-                Array.set(mappingsObject, 0, mapping18);
-                Array.set(mappingsObject, 1, mapping19);
-                Object[] mappings = (Object[]) mappingsObject;
-                Method reg = Protocol.DirectionData.class.getDeclaredMethod("registerPacket", Class.class, mappings.getClass());
+                List<Object> mappings = new ArrayList<>();
+                mappings.add(map.invoke(null, ProtocolConstants.MINECRAFT_1_8, 0x48));
+                mappings.add(map.invoke(null, ProtocolConstants.MINECRAFT_1_9, 0x32));
+                if (ProtocolConstants.SUPPORTED_VERSION_IDS.contains(ProtocolConstants.MINECRAFT_1_12)) {
+                    mappings.add(map.invoke(null, ProtocolConstants.MINECRAFT_1_12, 0x33));
+                }
+                if (ProtocolConstants.SUPPORTED_VERSION_IDS.contains(ProtocolConstants.MINECRAFT_1_12_1)) {
+                    mappings.add(map.invoke(null, ProtocolConstants.MINECRAFT_1_12_1, 0x34));
+                }
+                Object mappingsObject = Array.newInstance(mappings.get(0).getClass(), mappings.size());
+                for (int i = 0; i < mappings.size(); i++) {
+                    Array.set(mappingsObject, i, mappings.get(i));
+                }
+                Object[] mappingsArray = (Object[]) mappingsObject;
+                Method reg = Protocol.DirectionData.class.getDeclaredMethod("registerPacket", Class.class, mappingsArray.getClass());
                 reg.setAccessible(true);
-                reg.invoke(Protocol.GAME.TO_CLIENT, ResourcePackSendPacket.class, mappings);
-                
+                try {
+                    reg.invoke(Protocol.GAME.TO_CLIENT, ResourcePackSendPacket.class, mappingsArray);
+                } catch (Throwable t) {
+                	OmniCord.getInstance().getLogger().log(Level.SEVERE, "Protocol version " + bungeeVersion + " is not supported! Please look for an update!");
+                    return;
+                }
             } else {
+            	OmniCord.getInstance().getLogger().log(Level.SEVERE, "Unsupported BungeeCord version (" + bungeeVersion + ") found! You need at least 1.8 for this plugin to work!");
                 return;
             }
 
-            pm = new PackManager();
-            um = new UserManager();
-            registerPacks();
+            um = new UserManager(instance);
 
-            ProxyServer.getInstance().getPluginManager().registerListener(OmniCord.getInstance(), new DisconnectListener());
+            OmniCord.getInstance().getProxy().getPluginManager().registerListener(OmniCord.getInstance(), new DisconnectListener(instance));
             
+            OmniCord.getInstance().getProxy().registerChannel("Resourcepack");
+
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
+        	OmniCord.getInstance().getLogger().log(Level.SEVERE, "Couldn't find the registerPacket method in the Protocol.DirectionData class! Please update this plugin or downgrade BungeeCord!");
             e.printStackTrace();
         } catch(NoSuchFieldException e) {
+        	OmniCord.getInstance().getLogger().log(Level.SEVERE, "Couldn't find the field with the supported versions! Please update this plugin or downgrade BungeeCord!");
             e.printStackTrace();
         }
     }
 
-    public static void registerPacks() {
-    	
-    	for(TextureType type : TextureType.values()){
-    		
-    		System.out.println("Registrando pack de texturas " + type.getPack().getName() + "!");
-    		getPackManager().addPack(type.getPack());
-    		continue;
-    		
-    	}
-        
+    public static BungeeResourcepacks getInstance() {
+        return instance;
     }
     
     /**
@@ -144,7 +165,7 @@ public abstract class BungeeResourcepacks {
         if(player.getServer() != null) {
             serverName = player.getServer().getInfo().getName();
         }
-        getPackManager().applyPack(player.getUniqueId(), serverName);
+        getPackManager().applyPack(player.getName(), player.getUniqueId(), serverName);
     }
 
     public void resendPack(UUID playerId) {
@@ -159,17 +180,22 @@ public abstract class BungeeResourcepacks {
      * @param player The ProxiedPlayer to send the pack to
      * @param pack The resourcepack to send the pack to
      */
-    public static void sendPack(ProxiedPlayer player, ResourcePack pack) {
+    protected void sendPack(ProxiedPlayer player, ResourcePack pack) {
         int clientVersion = player.getPendingConnection().getVersion();
         if(clientVersion >= ProtocolConstants.MINECRAFT_1_8) {
             try {
                 ResourcePackSendPacket packet = new ResourcePackSendPacket(pack.getUrl(), pack.getHash());
                 player.unsafe().sendPacket(packet);
                 sendPackInfo(player, pack);
-            } catch(BadPacketException e) { e.printStackTrace();
-            } catch(ClassCastException e) { e.printStackTrace();
+                OmniCord.getInstance().getLogger().log(getLogLevel(), "Send pack " + pack.getName() + " (" + pack.getUrl() + ") to " + player.getName());
+            } catch(BadPacketException e) {
+            	OmniCord.getInstance().getLogger().log(Level.SEVERE, e.getMessage() + " Please check for updates!");
+            } catch(ClassCastException e) {
+            	OmniCord.getInstance().getLogger().log(Level.SEVERE, "Packet defined was not ResourcePackSendPacket? Please check for updates!");
             }
         } else {
+        	OmniCord.getInstance().getLogger().log(Level.WARNING, "Cannot send the pack " + pack.getName() + " (" + pack.getUrl() + ") to " + player.getName() + " as he uses the unsupported protocol version " + clientVersion + "!");
+            OmniCord.getInstance(). getLogger().log(Level.WARNING, "Consider blocking access to your server for clients with version under 1.8 if you want this plugin to work for everyone!");
         }
     }
 
@@ -184,48 +210,41 @@ public abstract class BungeeResourcepacks {
       * @param player The player to update the pack on the player's bukkit server
       * @param pack The ResourcePack to send the info of the the Bukkit server, null if you want to clear it!
       */
-    public static void sendPackInfo(ProxiedPlayer player, ResourcePack pack) {
-    	
+    public void sendPackInfo(ProxiedPlayer player, ResourcePack pack) {
         if (player.getServer() == null) {
             return;
         }
-        
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        
         if(pack != null) {
-        	
             out.writeUTF("packChange");
             out.writeUTF(player.getName());
             out.writeUTF(pack.getName());
             out.writeUTF(pack.getUrl());
             out.writeUTF(pack.getHash());
-            
         } else {
-        	
             out.writeUTF("clearPack");
             out.writeUTF(player.getName());
-            
         }
-        player.getServer().sendData("BungeeCord", out.toByteArray());
+        player.getServer().sendData("Resourcepack", out.toByteArray());
     }
 
-    public static void setPack(UUID playerId, ResourcePack pack) {
-        getPackManager().setPack(playerId, pack);
+    public void setPack(String playername, UUID playerId, ResourcePack pack) {
+        getPackManager().setPack(playername, playerId, pack);
     }
 
-    public static void sendPack(UUID playerId, ResourcePack pack) {
+    public void sendPack(UUID playerId, ResourcePack pack) {
         ProxiedPlayer player = OmniCord.getInstance().getProxy().getPlayer(playerId);
         if(player != null) {
             sendPack(player, pack);
         }
     }
 
-    public static void clearPack(ProxiedPlayer player) {
+    public void clearPack(ProxiedPlayer player) {
         getUserManager().clearUserPack(player.getUniqueId());
         sendPackInfo(player, null);
     }
 
-    public static void clearPack(UUID playerId) {
+    public void clearPack(UUID playerId) {
         getUserManager().clearUserPack(playerId);
         ProxiedPlayer player = OmniCord.getInstance().getProxy().getPlayer(playerId);
         if (player != null) {
@@ -233,11 +252,11 @@ public abstract class BungeeResourcepacks {
         }
     }
 
-    public static PackManager getPackManager() {
+    public PackManager getPackManager() {
         return pm;
     }
 
-    public static UserManager getUserManager() {
+    public UserManager getUserManager() {
         return um;
     }
 
@@ -245,7 +264,7 @@ public abstract class BungeeResourcepacks {
      * Add a player's UUID to the list of players with a backend pack
      * @param playerId The uuid of the player
      */
-    public static void setBackend(UUID playerId) {
+    public void setBackend(UUID playerId) {
         backendPackedPlayers.put(playerId, false);
     }
 
@@ -253,7 +272,7 @@ public abstract class BungeeResourcepacks {
      * Remove a player's UUID from the list of players with a backend pack
      * @param playerId The uuid of the player
      */
-    public static void unsetBackend(UUID playerId) {
+    public void unsetBackend(UUID playerId) {
         backendPackedPlayers.remove(playerId);
     }
 
@@ -267,7 +286,7 @@ public abstract class BungeeResourcepacks {
     }
 
     public String getMessage(String key) {
-        return ChatColor.translateAlternateColorCodes('&', "&6Esta modalidad usa un Texture Pack customizado, Por favor acepte la descarga del texture pack...");
+        return "";
     }
 
     public String getMessage(String key, Map<String, String> replacements) {
@@ -284,6 +303,7 @@ public abstract class BungeeResourcepacks {
         return loglevel;
     }
 
+    @Override
     public ResourcepacksPlayer getPlayer(UUID playerId) {
         ProxiedPlayer player = OmniCord.getInstance().getProxy().getPlayer(playerId);
         if(player != null) {
@@ -292,6 +312,7 @@ public abstract class BungeeResourcepacks {
         return null;
     }
 
+    @Override
     public ResourcepacksPlayer getPlayer(String playerName) {
         ProxiedPlayer player = OmniCord.getInstance().getProxy().getPlayer(playerName);
         if(player != null) {
@@ -300,10 +321,12 @@ public abstract class BungeeResourcepacks {
         return null;
     }
 
+    @Override
     public boolean sendMessage(ResourcepacksPlayer player, String message) {
         return sendMessage(player, Level.INFO, message);
     }
 
+    @Override
     public boolean sendMessage(ResourcepacksPlayer player, Level level, String message) {
         if(player != null) {
             ProxiedPlayer proxyPlayer = OmniCord.getInstance().getProxy().getPlayer(player.getUniqueId());
@@ -312,10 +335,12 @@ public abstract class BungeeResourcepacks {
                 return true;
             }
         } else {
+        	OmniCord.getInstance().getLogger().log(level, message);
         }
         return false;
     }
 
+    @Override
      public boolean checkPermission(ResourcepacksPlayer player, String perm) {
         // Console
         if(player == null)
@@ -324,7 +349,8 @@ public abstract class BungeeResourcepacks {
 
     }
 
-    public static boolean checkPermission(UUID playerId, String perm) {
+    @Override
+    public boolean checkPermission(UUID playerId, String perm) {
         ProxiedPlayer proxiedPlayer = OmniCord.getInstance().getProxy().getPlayer(playerId);
         if(proxiedPlayer != null) {
             return proxiedPlayer.hasPermission(perm);
@@ -333,7 +359,8 @@ public abstract class BungeeResourcepacks {
 
     }
 
-    public static int getPlayerPackFormat(UUID playerId) {
+    @Override
+    public int getPlayerPackFormat(UUID playerId) {
         ProxiedPlayer proxiedPlayer = OmniCord.getInstance().getProxy().getPlayer(playerId);
         if(proxiedPlayer != null) {
             return getPackManager().getPackFormat(proxiedPlayer.getPendingConnection().getVersion());
@@ -341,16 +368,28 @@ public abstract class BungeeResourcepacks {
         return -1;
     }
 
-    public static IResourcePackSelectEvent callPackSelectEvent(UUID playerId, ResourcePack pack, IResourcePackSelectEvent.Status status) {
+    @Override
+    public IResourcePackSelectEvent callPackSelectEvent(UUID playerId, ResourcePack pack, IResourcePackSelectEvent.Status status) {
         ResourcePackSelectEvent selectEvent = new ResourcePackSelectEvent(playerId, pack, status);
         OmniCord.getInstance().getProxy().getPluginManager().callEvent(selectEvent);
         return selectEvent;
     }
 
-    public static IResourcePackSendEvent callPackSendEvent(UUID playerId, ResourcePack pack) {
+    @Override
+    public IResourcePackSendEvent callPackSendEvent(UUID playerId, ResourcePack pack) {
         ResourcePackSendEvent sendEvent = new ResourcePackSendEvent(playerId, pack);
         OmniCord.getInstance().getProxy().getPluginManager().callEvent(sendEvent);
         return sendEvent;
+    }
+
+    @Override
+    public int runTask(Runnable runnable) {
+        return OmniCord.getInstance().getProxy().getScheduler().schedule(OmniCord.getInstance(), runnable, 0, TimeUnit.MICROSECONDS).getId();
+    }
+
+    @Override
+    public int runAsyncTask(Runnable runnable) {
+        return OmniCord.getInstance().getProxy().getScheduler().runAsync(OmniCord.getInstance(), runnable).getId();
     }
 
     public void setAuthenticated(UUID playerId, boolean b) {
@@ -364,4 +403,29 @@ public abstract class BungeeResourcepacks {
     public int getBungeeVersion() {
         return bungeeVersion;
     }
+
+	@Override
+	public boolean isAuthenticated(UUID playerId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setStoredPack(UUID playerId, String packName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getStoredPack(UUID playerId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isUsepackTemporary() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

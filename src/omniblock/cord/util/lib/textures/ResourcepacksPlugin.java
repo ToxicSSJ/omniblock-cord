@@ -1,10 +1,8 @@
 package omniblock.cord.util.lib.textures;
 
-import java.io.File;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import omniblock.cord.util.lib.textures.events.IResourcePackSelectEvent;
 import omniblock.cord.util.lib.textures.events.IResourcePackSendEvent;
@@ -13,12 +11,6 @@ import omniblock.cord.util.lib.textures.events.IResourcePackSendEvent;
  * Created by Phoenix616 on 03.02.2016.
  */
 public interface ResourcepacksPlugin {
-
-    /**
-     * Get whether the plugin successful enabled or not
-     * @return <tt>true</tt> if the plugin was proberly enabled
-     */
-    boolean isEnabled();
 
     /**
      * Resends the pack that corresponds to the player's server
@@ -33,7 +25,7 @@ public interface ResourcepacksPlugin {
      * @deprecated Please use {@link PackManager#setPack(UUID, ResourcePack)}!
      */
     @Deprecated
-    void setPack(UUID playerId, ResourcePack pack);
+    void setPack(String playername, UUID playerId, ResourcePack pack);
 
     /**
      * Internal method to send a resoucepack to a player, please use {@link PackManager#setPack(UUID, ResourcePack)}!
@@ -62,24 +54,6 @@ public interface ResourcepacksPlugin {
      * @return The defined message string or an error message if the variable isn't known.
      */
     String getMessage(String key, Map<String, String> replacements);
-
-    /**
-     * Get the name of the plugin
-     * @return The plugin's name as a string
-     */
-    String getName();
-
-    /**
-     * Get the version of the plugin
-     * @return The plugin's version as a string
-     */
-    String getVersion();
-
-    Logger getLogger();
-
-    File getDataFolder();
-
-    Level getLogLevel();
 
     ResourcepacksPlayer getPlayer(UUID playerId);
 
@@ -163,4 +137,24 @@ public interface ResourcepacksPlugin {
      */
     int runAsyncTask(Runnable runnable);
 
+    /**
+     * Set the pack that the player should get when logging in when no other pack applies
+     * and that gets used instead of the empty pack on reset
+     * @param playerId  UUID of the player
+     * @param packName  Name of the pack
+     */
+    void setStoredPack(UUID playerId, String packName);
+
+    /**
+     * Get the pack that a certain player has stored
+     * @param playerId  The UUID of the player
+     * @return The name of the pack or <tt>null</tt> if none was stored
+     */
+    String getStoredPack(UUID playerId);
+
+    /**
+     * Get whether or not the default /usepack behaviour is to apply temporary opr permanent
+     * @return <tt>true</tt> if it's temporary, <tt>false</tt> if not
+     */
+    boolean isUsepackTemporary();
 }
