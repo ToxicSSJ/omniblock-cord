@@ -1,47 +1,39 @@
 package omniblock.cord.network.textures.io;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import java.util.concurrent.TimeUnit;
 
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import omniblock.cord.network.textures.io.object.ResourcePackSendBPacket;
-import omniblock.cord.util.lib.textures.ResourcePack;
+import omniblock.cord.OmniCord;
+import omniblock.cord.network.textures.io.listener.PlayerJoinListener;
+import omniblock.cord.network.textures.io.listener.PlayerQuitListener;
 
 public class ResourcePackHandler {
 
-	public static void sendPacket(ProxiedPlayer player, TextureType type) {
+	public static void registerListeners() {
 		
-		player.unsafe().sendPacket(new ResourcePackSendBPacket(type.getPack().getUrl()));
-		sendPacketInfo(player, type.getPack());
-		return;
+		ProxyServer.getInstance().getPluginManager().registerListener(OmniCord.getPlugin(), new PlayerJoinListener());
+		ProxyServer.getInstance().getPluginManager().registerListener(OmniCord.getPlugin(), new PlayerQuitListener());
 		
 	}
 	
-	@SuppressWarnings("unused")
-	private static void sendPacketInfo(ProxiedPlayer player, ResourcePack pack) {
+	public static void sendPacket(ProxiedPlayer player, TextureType type) {
 		
-		if (player.getServer() == null) {
-            return;
-        }
+		ProxyServer.getInstance().getScheduler().schedule(OmniCord.getInstance(), new Runnable() {
+			
+		    public void run() {
+		    	
+		    	ProxyServer.getInstance().getPluginManager().dispatchCommand(
+						ProxyServer.getInstance().getConsole(),
+						"gen_command_usepack " + type.getPack().getName().toLowerCase() + " " + player.getName());
+		    	
+		    }
+		    
+		}, 3, TimeUnit.SECONDS);
 		
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        
-        if(pack != null) {
-        	
-            out.writeUTF("packChange");
-            out.writeUTF(player.getName());
-            out.writeUTF(pack.getName());
-            out.writeUTF(pack.getUrl());
-            out.writeUTF(pack.getHash());
-            
-        } else {
-        	
-            out.writeUTF("clearPack");
-            out.writeUTF(player.getName());
-            
-        }
-        
-        player.getServer().sendData("Resourcepack", out.toByteArray());
+		
+		return;
+		
 	}
 	
 }

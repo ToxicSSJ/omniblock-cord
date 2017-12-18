@@ -7,6 +7,9 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import omniblock.cord.OmniCord;
 import omniblock.cord.addons.motd.type.MOTDType;
+import omniblock.cord.addons.network.MaintenanceManager;
+import omniblock.cord.addons.phase.PhaseManager;
+import omniblock.cord.util.NumberUtil;
 import omniblock.cord.util.TextUtil;
 
 /**
@@ -38,8 +41,17 @@ public class MOTDManager implements Listener {
 	@EventHandler
     public void onPing(ProxyPingEvent e){
 		
+		if(NumberUtil.getRandomInt(1, 2) == 1) motd = MOTDType.COMMON_MOTD;
+		else motd = MOTDType.PROMOTION_MOTD;
+		
+		if(MaintenanceManager.maintenance)
+			motd = MOTDType.MAINTENACE;
+		
         ServerPing serverPing = e.getResponse();
-        serverPing.setDescription(TextUtil.format(motd.getPreset().getLine(1) + "" + motd.getPreset().getLine(2)));
+        serverPing.setDescription(
+        		TextUtil.format(
+        				motd.getPreset().getLine(1).replaceAll("VAR_PHASE_NAME", PhaseManager.getPhase().getMotd()) + "" +
+        				motd.getPreset().getLine(2).replaceAll("VAR_PHASE_NAME", PhaseManager.getPhase().getMotd())));
         e.setResponse(serverPing);
         
     }

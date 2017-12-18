@@ -164,7 +164,7 @@ public class PARTYManager implements Listener {
 					
 					if(PartyUtils.isMember(player) || PartyUtils.isOwner(player)){
 						
-						sender.sendMessage(TextUtil.format("&cEl jugador &7" + player.getName() + " &7ya pertenece a otra party!"));
+						sender.sendMessage(TextUtil.format("&cEl jugador &7" + player.getName() + " &cya pertenece a otra party!"));
 						return;
 						
 					}
@@ -284,7 +284,7 @@ public class PARTYManager implements Listener {
 				
 				if(PartyUtils.isMember(player) || PartyUtils.isOwner(player)){
 					
-					sender.sendMessage(TextUtil.format("&cEl jugador &7" + player.getName() + " &7ya pertenece a otra party!"));
+					sender.sendMessage(TextUtil.format("&cEl jugador &7" + player.getName() + " &cya pertenece a otra party!"));
 					return;
 					
 				}

@@ -114,7 +114,7 @@ public class ResolverListener implements Listener {
 			e.printStackTrace();
 		}
 		
-		System.err.println("No se pudo obtener el NetworkID usando MD5!!!! Devolviendo UUID como NetworkID!!!");
+		System.err.println("No se pudo obtener el NetworkID usando MD5! Devolviendo UUID como NetworkID!");
 		return randUId.toString();
 	}
 

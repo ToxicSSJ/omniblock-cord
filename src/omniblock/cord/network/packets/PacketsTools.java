@@ -16,9 +16,12 @@ import net.omniblock.packets.network.structure.packet.PlayerSendBanPacket;
 import net.omniblock.packets.network.structure.packet.ResposeAuthEvaluatePacket;
 import net.omniblock.packets.network.structure.packet.ResposeBoostedGamesPacket;
 import net.omniblock.packets.network.structure.packet.ResposeGamePartyInfoPacket;
-import net.omniblock.packets.network.structure.packet.ResposePlayerNetworkBoosterPacket;
 import omniblock.cord.OmniCord;
 import omniblock.cord.addons.network.PARTYManager.PartyUtils;
+import omniblock.cord.database.base.AccountBase;
+import omniblock.cord.database.base.BoosterBase;
+import omniblock.cord.database.base.helpers.AccountHelper.AccountBoosterType;
+import omniblock.cord.database.base.items.NetworkBoosterType;
 import omniblock.cord.network.core.io.MSGPatcher;
 import omniblock.cord.network.textures.io.TextureType;
 import omniblock.cord.util.TextUtil;
@@ -131,6 +134,7 @@ public class PacketsTools {
 		
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static void promptNetworkBooster2Player(String player, String key, String gametype, int duration){
 		
 		ProxiedPlayer target = ProxyServer.getInstance().getPlayer(player);
@@ -145,21 +149,32 @@ public class PacketsTools {
 				NETWORK_BOOSTERS.put(gametype, new BoosterTask(player, gametype, duration));
 				
 				sendMessage2All(
-						"&r[br]"
+						"\n"
 					  +	"[center]&9&l¡" + player + " ha activado un booster global!" + "[/center][br]"
 					  + "&8&m-&r &7Recibirás bonificaciones adicionales por cada partida que juegues en la modalidad"
-					  + "&7de &d&l" + gametype.toUpperCase() + "&7 donde se activó el booster![br]"
+					  + "&7de &6&l✯ " + gametype.toUpperCase() + "&7 donde se activó el booster!"
 						);
 				
-				sendTitle2All("&9&lNETWORK BOOSTER ACTIVADO", "&4&k||&r &bJugador: &7" + player + " &bModalidad: &7" + gametype + " &4&k||&r");
+				sendTitle2All("&9&lNETWORK BOOSTER ACTIVADO", "&4&k||&r &bJugador: &7" + player + " &bModalidad: &7" + gametype + " &4&k||&r\n");
 				
-				Packets.STREAMER.streamPacket(new ResposePlayerNetworkBoosterPacket()
-            			.setBoosterkey(key)
-            			.setGametype(gametype)
-            			.setPlayername(player)
-            			.build().setReceiver(SOCKET_PORTS.get(target.getServer().getInfo().getName()))
-            			);
-				
+				AccountBase.removeTag(target.getName(), key);
+
+				BoosterBase.removeEnabledBooster(target.getName(), AccountBoosterType.NETWORK_BOOSTER);
+				BoosterBase.startBooster(target.getName(), key, AccountBoosterType.NETWORK_BOOSTER);
+
+				target.sendMessage(TextUtil
+						.format(TextUtil.getCenteredMessage("\n&a&m--------------------------------")));
+				target.sendMessage(TextUtil
+						.format(TextUtil.getCenteredMessage("&7¡Has activado un booster global!")));
+				target.sendMessage(TextUtil.format(TextUtil.getCenteredMessage("")));
+				target.sendMessage(TextUtil.format(TextUtil.getCenteredMessage(
+						"&8Nombre: &b" + NetworkBoosterType.fromKey(key).getName())));
+				target.sendMessage(
+						TextUtil.format(TextUtil.getCenteredMessage("&8Modalidad: &b" + gametype)));
+				target.sendMessage(TextUtil.format(TextUtil.getCenteredMessage("&8Finalizará: &b"
+						+ BoosterBase.parseExpireDate(NetworkBoosterType.fromKey(key).getEndDate()))));
+				target.sendMessage(TextUtil
+						.format(TextUtil.getCenteredMessage("&a&m--------------------------------\n")));
 				return;
 				
 			} else {
@@ -335,7 +350,7 @@ public class PacketsTools {
 							
 						} else {
 							
-							if(type != TextureType.OMNIBLOCK_DEFAULT) type.sendPack(target);
+							type.sendPack(target);
 							SAVED_TEXTURES.put(player, type);
 							return;
 							
@@ -372,6 +387,24 @@ public class PacketsTools {
 						.replaceFirst("VAR_KICK_REASON", reason));
 				
 			}
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * Con este metodo se expulsarán a todos los jugadores con el mensaje predefinido
+	 * de mantenimiento. Este metodo será efectivo para la creación de mantenimientos
+	 * en base a paquetes externos de cualquier medio.
+	 */
+	@SuppressWarnings("deprecation")
+	public static void sendMaintenance() {
+		
+		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()){
+			
+			player.disconnect(MSGPatcher.MAINTENANCE_KICKED);
+			continue;
+			
 		}
 		
 	}

@@ -1,16 +1,16 @@
 package omniblock.cord.network.textures.io;
 
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import omniblock.cord.util.lib.textures.ResourcePack;
+import de.themoep.resourcepacksplugin.core.ResourcePack;
 
 public enum TextureType {
 
 	OMNIBLOCK_DEFAULT(new ResourcePack(
 			
-			"OMNIBLOCKDEF",
+			"omniblockdef",
 			"http://omniblock.net/gameserver/DEFAULT.zip",
-			"1798caf219d9eaaf7d33e61053a49a32988ae9eb",
-			1,
+			"f5f1ae1188a4b04ddea8ce3967a4de4fd5fdd757",
+			0,
 			false,
 			""
 			
@@ -18,10 +18,10 @@ public enum TextureType {
 	
 	SKYWARS_Z_PACK(new ResourcePack(
 			
-			"SKWZ",
+			"skwz",
 			"http://omniblock.net/gameserver/SKWZvC1.zip",
-			"d4a6b3cf9b72fe2d63adbf29fcb101f9f9c362f4",
-			1,
+			"1798caf219d9eaaf7d33e61053a49a32988ae9eb",
+			0,
 			false,
 			""
 			

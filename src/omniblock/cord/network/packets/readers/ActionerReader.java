@@ -15,6 +15,8 @@ import net.omniblock.packets.network.structure.data.PacketStructure.DataType;
 import net.omniblock.packets.network.structure.packet.RequestActionExecutorPacket;
 import net.omniblock.packets.network.structure.packet.ResposeActionExecutorPacket;
 import net.omniblock.packets.network.tool.object.PacketReader;
+import omniblock.cord.addons.network.MaintenanceManager;
+import omniblock.cord.addons.phase.PhaseManager;
 import omniblock.cord.database.base.BanBase;
 import omniblock.cord.database.base.BankBase;
 import omniblock.cord.network.packets.PacketsTools;
@@ -23,6 +25,7 @@ import omniblock.cord.database.sql.util.Resolver;
 import omniblock.cord.database.base.helpers.BanHelper;
 
 import omniblock.cord.database.base.RankBase;
+import omniblock.cord.database.base.SkywarsBase;
 
 public class ActionerReader {
 	
@@ -239,6 +242,27 @@ public class ActionerReader {
 			
 		}),
 		
+		NETWORKID_EXECUTOR("networkidrequest", 1, new ActionExecutor() {
+
+			@Override
+			public ResposeActionExecutorPacket execute(String[] args) {
+				
+				String playername = args[0];
+				
+				if(!Resolver.hasLastName(playername)) {
+					
+					return new ResposeActionExecutorPacket()
+							.setResponse("El jugador " + playername + " nunca ha ingresado a Omniblock Network o su nombre cambió!");
+					
+				}
+				
+				return new ResposeActionExecutorPacket()
+						.setResponse(Resolver.getNetworkIDByName(playername));
+				
+			}
+			
+		}),
+		
 		RANK_EXECUTOR("rankrequest", 2, new ActionExecutor() {
 
 			@Override
@@ -321,6 +345,151 @@ public class ActionerReader {
 				
 				return new ResposeActionExecutorPacket()
 						.setResponse("La acción " + action + " no es valida para este comando!");
+				
+			}
+			
+		}),
+		
+		NETWORK_BOOSTER_INFO("networkboosterrequest", 1, new ActionExecutor() {
+
+			@Override
+			public ResposeActionExecutorPacket execute(String[] args) {
+				
+				String gametype = args[0];
+				String returned = "disabled";
+				
+				if(!PacketsTools.NETWORK_BOOSTERS.containsKey(gametype))
+					return new ResposeActionExecutorPacket()
+							.setResponse("invalid");
+				
+				if(PacketsTools.NETWORK_BOOSTERS.get(gametype) != null)
+					return new ResposeActionExecutorPacket()
+							.setResponse("enabled#" + PacketsTools.NETWORK_BOOSTERS.get(gametype).getPlayer());
+				
+				return new ResposeActionExecutorPacket()
+						.setResponse(returned);
+				
+			}
+			
+		}),
+		
+		SET_MAINTENANCE("maintenancerequest", 1, new ActionExecutor() {
+
+			@Override
+			public ResposeActionExecutorPacket execute(String[] args) {
+				
+				String status = args[0];
+				
+				if(status.equalsIgnoreCase("true") && !MaintenanceManager.maintenance) {
+					
+					MaintenanceManager.setMaintenance(Boolean.valueOf(status));
+					
+					return new ResposeActionExecutorPacket()
+							.setResponse("Se ha activado el modo mantenimiento correctamente!");
+					
+				} else if(status.equalsIgnoreCase("false") && MaintenanceManager.maintenance) {
+					
+					MaintenanceManager.setMaintenance(Boolean.valueOf(status));
+					
+					return new ResposeActionExecutorPacket()
+							.setResponse("Se ha desactivado el modo mantenimiento correctamente!");
+					
+				}
+				
+				if(!status.equalsIgnoreCase("true") && !status.equalsIgnoreCase("false"))
+					return new ResposeActionExecutorPacket()
+							.setResponse("El status '" + status + "' es invalido!");
+				
+				return new ResposeActionExecutorPacket()
+						.setResponse("El status '" + status + "' ya es el actual!");
+				
+			}
+			
+		}),
+		
+		BETAKEY("getbetakeyrequest", 1, new ActionExecutor() {
+
+			@Override
+			public ResposeActionExecutorPacket execute(String[] args) {
+				
+				String playername = args[0];
+				
+				if(!Resolver.hasLastName(playername))
+					return new ResposeActionExecutorPacket()
+							.setResponse("El jugador " + playername + " nunca ha ingresado a Omniblock Network o su nombre cambió!");
+				
+				String generatedKey = PhaseManager.getBetaKey(playername, true);
+				
+				return new ResposeActionExecutorPacket()
+						.setResponse("La key generada es: " + generatedKey);
+				
+			}
+			
+		}),
+		
+		REMOVE_BETAKEY("removebetakeyrequest", 1, new ActionExecutor() {
+
+			@Override
+			public ResposeActionExecutorPacket execute(String[] args) {
+				
+				String playername = args[0];
+				
+				if(!Resolver.hasLastName(playername))
+					return new ResposeActionExecutorPacket()
+							.setResponse("El jugador " + playername + " nunca ha ingresado a Omniblock Network o su nombre cambió!");
+				
+				PhaseManager.removeBetaKey(playername);
+				
+				return new ResposeActionExecutorPacket()
+						.setResponse("Se ha removida la key de " + playername + " correctamente!");
+				
+			}
+			
+		}),
+		
+		ADD_SKYWARS_TAG("addskywarstagrequest", 2, new ActionExecutor() {
+
+			@Override
+			public ResposeActionExecutorPacket execute(String[] args) {
+				
+				String playername = args[0];
+				String tag = args[1];
+				
+				if(!Resolver.hasLastName(playername)) {
+					
+					return new ResposeActionExecutorPacket()
+							.setResponse("El jugador " + playername + " nunca ha ingresado a Omniblock Network o su nombre cambió!");
+					
+				}
+				
+				SkywarsBase.addItem(playername, tag);
+				
+				return new ResposeActionExecutorPacket()
+						.setResponse("Se le ha añadido el tag " + tag + " al jugador " + playername + " correctamente!");
+				
+			}
+			
+		}),
+		
+		REMOVE_SKYWARS_TAG("removeskywarstagrequest", 2, new ActionExecutor() {
+
+			@Override
+			public ResposeActionExecutorPacket execute(String[] args) {
+				
+				String playername = args[0];
+				String tag = args[1];
+				
+				if(!Resolver.hasLastName(playername)) {
+					
+					return new ResposeActionExecutorPacket()
+							.setResponse("El jugador " + playername + " nunca ha ingresado a Omniblock Network o su nombre cambió!");
+					
+				}
+				
+				SkywarsBase.removeItem(playername, tag);
+				
+				return new ResposeActionExecutorPacket()
+						.setResponse("Se le ha removido el tag " + tag + " al jugador " + playername + " correctamente!");
 				
 			}
 			

@@ -37,7 +37,7 @@ public class TABPatcher implements Listener {
 	public void onLogin(PostLoginEvent e){
 		
 		TextComponent header = new TextComponent(TextUtil.format("&bEstás jugando en &9&lMC.OMNIBLOCK.NET &8&l: &a&l" + "#"));
-		TextComponent footer = new TextComponent(TextUtil.format("&bOmniblock Network (c) &8| &bParche: &71.12 &8| &bwww.omniblock.net"));
+		TextComponent footer = new TextComponent(TextUtil.format("&bOmniblock Network (c) &8| &bParche: &c&lBETA &8| &bwww.omniblock.net"));
 		
 		e.getPlayer().setTabHeader(header, footer);
 		
@@ -47,7 +47,7 @@ public class TABPatcher implements Listener {
 	public void onSwitch(ServerSwitchEvent e){
 		
 		TextComponent header = new TextComponent(TextUtil.format("&bEstás jugando en &9&lMC.OMNIBLOCK.NET &8&l: &a" + e.getPlayer().getServer().getInfo().getName()));
-		TextComponent footer = new TextComponent(TextUtil.format("&bOmniblock Network (c) &8| &bParche: &71.12 &8| &bwww.omniblock.net"));
+		TextComponent footer = new TextComponent(TextUtil.format("&bOmniblock Network (c) &8| &bParche: &c&lBETA &8| &bwww.omniblock.net"));
 		
 		e.getPlayer().setTabHeader(header, footer);
 		

@@ -44,4 +44,43 @@ public class MSGPatcher {
 					
 			);
 	
+	public static final String MAINTENANCE_KICKED = TextUtil.format(
+			
+			"\n&c&lMANTENIMIENTO" +
+			" \n" +
+			"&7Se te ha expulsado mientras efectuamos un mantenimiento programado,\n" +
+			"&7recuerda que este tipo de acciones pueden conllevar mucho tiempo\n " +
+			"&7pero lo hacemos para añadir o mejorar cosas a la Network.\n " +
+			" \n" +
+			"&7Para obtener mas información dirigete al siguiente\n" +
+			"&7link: &bforo.omniblock.net\n"
+					
+			);
+	
+	public static final String MAINTENANCE_JOIN = TextUtil.format(
+			
+			"\n&c&lMANTENIMIENTO" +
+			" \n" +
+			"&7No podrás ingresar al servidor mientras se efectua un mantenimiento\n" +
+			"&7programado, recuerda que este tipo de acciones pueden conllevar mucho\n " +
+			"&7tiempo pero lo hacemos para añadir o mejorar cosas a la Network.\n " +
+			" \n" +
+			"&7Para obtener mas información dirigete al siguiente\n" +
+			"&7link: &bforo.omniblock.net\n"
+					
+			);
+	
+	public static final String BETA_JOIN = TextUtil.format(
+			
+			"\n&6&lBETA KEYS" +
+			" \n" +
+			"&7No posees una Beta Key registrada para ingresar al servidor, recuerda\n" +
+			"&7que mientras el servidor se encuentree en la fase de &f&nBetaKeys&r&7 deberás\n " +
+			"&7tener una registrada al nombre de tu cuenta para poder ingresar al servidor.\n " +
+			" \n" +
+			"&7En caso de que tengas una Beta Key y no puedas ingresar al servidor puedes\n" +
+			"&7contactar al soporte de omniblock por medio de Discord: &ddiscord.omniblock.net\n"
+					
+			);
+	
 }
