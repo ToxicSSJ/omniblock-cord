@@ -96,7 +96,7 @@ public class VariableUtils {
 		P_PASS("VAR_P_PASS", AuthBase.DEFAULT_PASS),
 		P_EMAIL("VAR_P_EMAIL", "omniblockmc@gmail.com"),
 		P_COMMON_BOOSTER("VAR_P_COMMONBOOSTER", "NONE"),
-		P_SETTINGS("VAR_P_SETTINGS", "spanish,iplogin,privatemsg,texturesound,friendrequest"),
+		P_SETTINGS("VAR_P_SETTINGS", "spanish,iplogin,privatemsg,texturesound,friendrequest,seeplayers"),
 
 		P_SKYWARS_ITEMS("VAR_P_SKYWARS_ITEMS", SKYWARS_INITIAL_ITEMS),
 		P_SKYWARS_EXTRA_POINTS("VAR_P_SKYWARS_EXTRA_POINTS", SKYWARS_INITIAL_EXTRA_POINTS),

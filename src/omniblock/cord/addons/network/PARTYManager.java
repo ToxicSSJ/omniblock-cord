@@ -277,7 +277,7 @@ public class PARTYManager implements Listener {
 				
 				if(player.getName() == sender.getName()){
 					
-					sender.sendMessage(TextUtil.format("&cNo te puedes crear una party invitandote a ti mismo!"));
+					sender.sendMessage(TextUtil.format("&cNo puedes crear una party invitandote a ti mismo!"));
 					return;
 					
 				}
