@@ -12,7 +12,8 @@ public class AccountHelper {
 	
 	public static enum AccountBoosterType {
 
-		NETWORK_BOOSTER, PERSONAL_BOOSTER,
+		NETWORK_BOOSTER,
+		PERSONAL_BOOSTER,
 
 		;
 
@@ -20,8 +21,12 @@ public class AccountHelper {
 
 	public static enum AccountTagType {
 
-		IP_LOGIN("iplogin"), PRIVATE_MSG("privatemsg"), TEXTURE_SOUND("texturesound"), FRIEND_REQUEST("friendrequest"),
-
+		IP_LOGIN("iplogin"),
+		PRIVATE_MSG("privatemsg"),
+		TEXTURE_SOUND("texturesound"),
+		FRIEND_REQUEST("friendrequest"),
+		SEE_PLAYERS("seeplayers"),
+		
 		;
 
 		private String key;

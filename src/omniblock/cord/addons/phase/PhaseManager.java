@@ -6,7 +6,7 @@ import omniblock.cord.util.TextUtil;
 
 public class PhaseManager {
 	
-	protected static PhaseType actualType = PhaseType.KEY_BETA;
+	protected static PhaseType actualType = PhaseType.OPEN_BETA;
 	
 	public static PhaseType getPhase() {
 		return actualType;
