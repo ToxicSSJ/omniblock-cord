@@ -14,16 +14,16 @@ import omniblock.cord.addons.motd.object.MOTDPreset;
 public enum MOTDType {
 
 	COMMON_MOTD(new MOTDPreset(
-			"    &8✯ &9&lOmniblock Network &8✯ VAR_PHASE_NAME   \n",
-			"        &61.9, 1.10, 1.11, 1.12 &8&l| &aAbierto!")),
+			"    &8✯ &9&lOmniblock Network &8✯ &a&lVAR_PHASE_NAME\n",
+			"             &61.8 - 1.12 &8&l| &aAbierto!")),
 	
 	PROMOTION_MOTD(new MOTDPreset(
-			"    &8✯ &9&lOmniblock Network &8✯ VAR_PHASE_NAME   \n",
-			"        &61.9, 1.10, 1.11, 1.12 &8&l| &aAbierto!")),
+			"    &8✯ &9&lOmniblock Network &8✯ &a&lVAR_PHASE_NAME\n",
+			"             &61.8 - 1.12 &8&l| &aAbierto!")),
 	
 	MAINTENACE(new MOTDPreset(
-			"   &8✯  &9&lOmniblock Network &8✯  &c&lMANTENIMIENTO   \n",
-			"      &61.9, 1.10, 1.11, 1.12 &8&l| &b&l@&bomniblockmc!")),
+			"    &8✯  &9&lOmniblock Network &8✯  &c&lMANTENIMIENTO\n",
+			"             &61.8 - 1.12 &8&l| &b&l@&bomniblockmc!")),
 	
 	;
 	

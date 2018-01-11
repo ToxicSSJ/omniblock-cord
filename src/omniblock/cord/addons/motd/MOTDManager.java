@@ -49,9 +49,9 @@ public class MOTDManager implements Listener {
 		
         ServerPing serverPing = e.getResponse();
         serverPing.setDescription(
-        		TextUtil.format(
-        				motd.getPreset().getLine(1).replaceAll("VAR_PHASE_NAME", PhaseManager.getPhase().getMotd()) + "" +
-        				motd.getPreset().getLine(2).replaceAll("VAR_PHASE_NAME", PhaseManager.getPhase().getMotd())));
+        		TextUtil.getCenteredMessage(
+        				TextUtil.centerText(motd.getPreset().getLine(1).replaceAll("VAR_PHASE_NAME", PhaseManager.getPhase().getMotd()), 45) + "" +
+        				TextUtil.centerText(motd.getPreset().getLine(2).replaceAll("VAR_PHASE_NAME", PhaseManager.getPhase().getMotd()), 45)));
         e.setResponse(serverPing);
         
     }
