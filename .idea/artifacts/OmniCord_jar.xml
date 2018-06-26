@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="OmniCord:jar">
+    <output-path>$PROJECT_DIR$/../CompiledJars</output-path>
+    <root id="archive" name="OmniCord.jar">
+      <element id="module-output" name="OmniCord" />
+    </root>
+  </artifact>
+</component>
