@@ -39,8 +39,6 @@ public class AuthBase {
 			e.printStackTrace();
 		}
 
-		return;
-
 	}
 
 	public static String getPassword(ProxiedPlayer player) {
@@ -77,9 +75,7 @@ public class AuthBase {
 
 				String pass = sqr.get("p_pass");
 
-				if (pass.equalsIgnoreCase(DEFAULT_PASS))
-					return false;
-				return true;
+				return !pass.equalsIgnoreCase(DEFAULT_PASS);
 
 			}
 
@@ -96,7 +92,6 @@ public class AuthBase {
 		Packets.STREAMER.streamPacket(new PlayerLoginSucessPacket().setPlayername(player.getName())
 				.useIPLogin(AccountHelper.hasTag(AccountTagType.IP_LOGIN, AccountBase.getTags(player))).build()
 				.setReceiver(PacketSenderType.OMNICORD));
-		return;
 
 	}
 
@@ -124,7 +119,6 @@ public class AuthBase {
 		Packets.STREAMER.streamPacket(new PlayerLoginSucessPacket().setPlayername(player.getName())
 				.useIPLogin(AccountHelper.hasTag(AccountTagType.IP_LOGIN, AccountBase.getTags(player))).build()
 				.setReceiver(PacketSenderType.OMNICORD));
-		return;
 
 	}
 

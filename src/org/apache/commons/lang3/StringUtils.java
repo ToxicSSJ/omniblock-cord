@@ -5370,7 +5370,7 @@ public class StringUtils {
          increase *= max < 0 ? 16 : max > 64 ? 64 : max;
          final StringBuilder buf = new StringBuilder(text.length() + increase);
          while (end != INDEX_NOT_FOUND) {
-             buf.append(text.substring(start, end)).append(replacement);
+             buf.append(text, start, end).append(replacement);
              start = end + replLength;
              if (--max == 0) {
                  break;
@@ -5835,7 +5835,7 @@ public class StringUtils {
             end = temp;
         }
         return new StringBuilder(len + start - end + overlay.length() + 1)
-            .append(str.substring(0, start))
+            .append(str, 0, start)
             .append(overlay)
             .append(str.substring(end))
             .toString();
@@ -7430,7 +7430,7 @@ public class StringUtils {
         final int endOffset = str.length()-targetSting/2;
 
         final StringBuilder builder = new StringBuilder(length);
-        builder.append(str.substring(0,startOffset));
+        builder.append(str, 0, startOffset);
         builder.append(middle);
         builder.append(str.substring(endOffset));
 

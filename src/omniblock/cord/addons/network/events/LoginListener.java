@@ -10,8 +10,6 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import omniblock.cord.OmniCord;
 import omniblock.cord.addons.network.MaintenanceManager;
-import omniblock.cord.addons.phase.PhaseManager;
-import omniblock.cord.addons.phase.PhaseManager.PhaseType;
 import omniblock.cord.database.base.RankBase;
 import omniblock.cord.database.sql.type.RankType;
 import omniblock.cord.database.sql.util.Resolver;
@@ -64,17 +62,6 @@ public class LoginListener implements Listener {
 			
 			e.getPlayer().disconnect(MSGPatcher.MAINTENANCE_JOIN);
 			return;
-			
-		}
-		
-		if(PhaseManager.getPhase() == PhaseType.KEY_BETA) {
-			
-			if(PhaseManager.getBetaKey(e.getPlayer().getName(), false).equalsIgnoreCase("NONE")) {
-				
-				e.getPlayer().disconnect(MSGPatcher.BETA_JOIN);
-				return;
-				
-			}
 			
 		}
 		

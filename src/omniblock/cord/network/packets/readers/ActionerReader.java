@@ -16,7 +16,6 @@ import net.omniblock.packets.network.structure.packet.RequestActionExecutorPacke
 import net.omniblock.packets.network.structure.packet.ResposeActionExecutorPacket;
 import net.omniblock.packets.network.tool.object.PacketReader;
 import omniblock.cord.addons.network.MaintenanceManager;
-import omniblock.cord.addons.phase.PhaseManager;
 import omniblock.cord.database.base.BanBase;
 import omniblock.cord.database.base.BankBase;
 import omniblock.cord.network.packets.PacketsTools;
@@ -379,46 +378,6 @@ public class ActionerReader {
 				
 				return new ResposeActionExecutorPacket()
 						.setResponse("El status '" + status + "' ya es el actual!");
-				
-			}
-			
-		}),
-		
-		BETAKEY("getbetakeyrequest", 1, new ActionExecutor() {
-
-			@Override
-			public ResposeActionExecutorPacket execute(String[] args) {
-				
-				String playername = args[0];
-				
-				if(!Resolver.hasLastName(playername))
-					return new ResposeActionExecutorPacket()
-							.setResponse("El jugador " + playername + " nunca ha ingresado a Omniblock Network o su nombre cambió!");
-				
-				String generatedKey = PhaseManager.getBetaKey(playername, true);
-				
-				return new ResposeActionExecutorPacket()
-						.setResponse("La key generada es: " + generatedKey);
-				
-			}
-			
-		}),
-		
-		REMOVE_BETAKEY("removebetakeyrequest", 1, new ActionExecutor() {
-
-			@Override
-			public ResposeActionExecutorPacket execute(String[] args) {
-				
-				String playername = args[0];
-				
-				if(!Resolver.hasLastName(playername))
-					return new ResposeActionExecutorPacket()
-							.setResponse("El jugador " + playername + " nunca ha ingresado a Omniblock Network o su nombre cambió!");
-				
-				PhaseManager.removeBetaKey(playername);
-				
-				return new ResposeActionExecutorPacket()
-						.setResponse("Se ha removida la key de " + playername + " correctamente!");
 				
 			}
 			

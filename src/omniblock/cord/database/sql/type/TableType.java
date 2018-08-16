@@ -119,7 +119,7 @@ public enum TableType {
 			this.creator_sql = creator;
 		}
 
-		public void make(Statement stm) throws SQLException {
+		public void make(Statement stm) {
 
 			try {
 				stm.executeUpdate(creator_sql);

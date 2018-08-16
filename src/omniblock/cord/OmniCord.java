@@ -13,7 +13,6 @@ package omniblock.cord;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 
 import net.md_5.bungee.api.plugin.Plugin;
@@ -53,8 +52,8 @@ public class OmniCord extends Plugin {
 	@Override
     public void onLoad() {
 
-    	System.out.println("");
-		System.out.println("");
+    	System.out.println();
+		System.out.println();
 		System.out.println("    ,----..    ");
 		System.out.println("   /   /   \\  ");
 		System.out.println("  /   .     : ");
@@ -68,8 +67,8 @@ public class OmniCord extends Plugin {
 		System.out.println("  ;   :    /   ");
 		System.out.println("   \\   \\ .'    ");
 		System.out.println("    `---`      ");
-		System.out.println("");
-		System.out.println("");
+		System.out.println();
+		System.out.println();
 
     }
 
@@ -96,16 +95,10 @@ public class OmniCord extends Plugin {
         if (!(file = new File(this.getDataFolder(), "config.yml")).exists()) {
         	
             try {
-            	
-			    InputStream in = this.getResourceAsStream("config.yml");
-			    try {
-			        Files.copy(in, file.toPath(), new CopyOption[0]);
-			    }
-			    finally {
-			        if (in != null) {
-			            in.close();
-			        }
-			    }
+
+				try (InputStream in = this.getResourceAsStream("config.yml")) {
+					Files.copy(in, file.toPath());
+				}
 			    
 			} catch (Exception e) {
 			   e.printStackTrace();

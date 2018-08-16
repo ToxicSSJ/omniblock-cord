@@ -33,7 +33,6 @@ public class RankBase {
 	public static void setRank(ProxiedPlayer player, RankType rt) {
 
 		setRank(player.getName(), rt);
-		return;
 
 	}
 
@@ -71,8 +70,6 @@ public class RankBase {
 			e.printStackTrace();
 		}
 
-		return;
-
 	}
 
 	public static void removeTemporalMembership(String player) {
@@ -91,8 +88,6 @@ public class RankBase {
 		} catch (IllegalArgumentException | SQLException e) {
 			e.printStackTrace();
 		}
-
-		return;
 
 	}
 
@@ -128,16 +123,13 @@ public class RankBase {
 			if (entry.getKey() == type) {
 
 				matchentry = entry;
-				continue;
 
 			}
 
 		}
 
 		if (matchentry != null) {
-			if (newmemberships.contains(matchentry)) {
-				newmemberships.remove(matchentry);
-			}
+			newmemberships.remove(matchentry);
 		}
 
 		for (Entry<MembershipType, Date> entry : newmemberships) {
@@ -148,8 +140,6 @@ public class RankBase {
 		}
 
 		setMembershipLoot(player, StringUtils.join(textmemberships, ","));
-
-		return;
 
 	}
 
@@ -169,7 +159,6 @@ public class RankBase {
 			if (end.after(now)) {
 
 				newmemberships.add(entry);
-				continue;
 
 			}
 
@@ -186,8 +175,6 @@ public class RankBase {
 		}
 
 		setMembershipLoot(player, StringUtils.join(textmemberships, ","));
-
-		return;
 
 	}
 
@@ -207,7 +194,6 @@ public class RankBase {
 			if (end.after(now)) {
 
 				newmemberships.add(entry);
-				continue;
 
 			}
 
@@ -237,7 +223,7 @@ public class RankBase {
 
 				String trimtemprank = sqr.get("p_temp_rank");
 
-				if (trimtemprank == "" || trimtemprank == "none") {
+				if (trimtemprank.equals("") || trimtemprank.equals("none")) {
 					return null;
 				}
 
@@ -265,7 +251,7 @@ public class RankBase {
 
 				String trimtemprankexpire = sqr.get("p_temp_rank_expire");
 
-				if (trimtemprankexpire == "" || trimtemprankexpire == "none") {
+				if (trimtemprankexpire.equals("") || trimtemprankexpire.equals("none")) {
 					return null;
 				}
 
@@ -282,7 +268,7 @@ public class RankBase {
 
 	public static List<Entry<MembershipType, Date>> getMembershipLoot(String player) {
 
-		List<Entry<MembershipType, Date>> loot = new ArrayList<Entry<MembershipType, Date>>();
+		List<Entry<MembershipType, Date>> loot = new ArrayList<>();
 
 		MakeSQLQuery msq = new MakeSQLQuery(TableType.RANK_DATA).select("p_loot").where("p_id",
 				Resolver.getNetworkIDByName(player));
@@ -306,20 +292,20 @@ public class RankBase {
 							Entry<MembershipType, Date> entry = MembershipType.getSeparatedInfo(k);
 							loot.add(entry);
 
-							continue;
-
 						}
 
 					}
 
 				} else {
 
-					if (trimloot != "none" && trimloot != "") {
+					if (!trimloot.equals("none"))
+						if (!trimloot.equals("")) {
 
-						Entry<MembershipType, Date> entry = MembershipType.getSeparatedInfo(trimloot);
-						loot.add(entry);
+							Entry<MembershipType, Date> entry;
+							entry = MembershipType.getSeparatedInfo(trimloot);
+							loot.add(entry);
 
-					}
+						}
 
 				}
 

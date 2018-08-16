@@ -4,13 +4,11 @@ public class AccountHelper {
 
 	public static boolean hasTag(AccountTagType tag, String tags) {
 
-		if (tags.contains(tag.getKey().toLowerCase()))
-			return true;
-		return false;
+		return tags.contains(tag.getKey().toLowerCase());
 
 	}
 	
-	public static enum AccountBoosterType {
+	public enum AccountBoosterType {
 
 		NETWORK_BOOSTER,
 		PERSONAL_BOOSTER,
@@ -19,7 +17,7 @@ public class AccountHelper {
 
 	}
 
-	public static enum AccountTagType {
+	public enum AccountTagType {
 
 		IP_LOGIN("iplogin"),
 		PRIVATE_MSG("privatemsg"),

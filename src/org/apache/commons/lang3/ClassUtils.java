@@ -128,9 +128,6 @@ public class ClassUtils {
      */
     private static final Map<String, String> reverseAbbreviationMap;
 
-    /**
-     * Feed abbreviation maps
-     */
     static {
         final Map<String, String> m = new HashMap<String, String>();
         m.put("int", "I");

@@ -37,7 +37,7 @@ public class AccountBase {
 			e.printStackTrace();
 		}
 
-		return (String) StartVariables.P_SETTINGS.getInitial();
+		return StartVariables.P_SETTINGS.getInitial();
 	}
 
 	public static void setTags(String player, String tags) {
@@ -50,33 +50,28 @@ public class AccountBase {
 		try {
 
 			msu.execute();
-			return;
 
 		} catch (IllegalArgumentException | SQLException e) {
 			e.printStackTrace();
 		}
-
-		return;
 
 	}
 
 	public static void setTags(ProxiedPlayer player, String tags) {
 
 		setTags(player.getName(), tags);
-		return;
 
 	}
 
 	public static void addTag(ProxiedPlayer player, String tag) {
 
 		addTag(player.getName(), tag);
-		return;
 
 	}
 
 	public static void addTag(String player, String tag) {
 
-		List<String> tags = new ArrayList<String>(Arrays.asList(getTags(player).split(",")));
+		List<String> tags = new ArrayList<>(Arrays.asList(getTags(player).split(",")));
 
 		if (!tags.contains(tag.toLowerCase())) {
 			tags.add(tag.toLowerCase());
@@ -84,28 +79,23 @@ public class AccountBase {
 
 		String newtags = StringUtils.join(tags, ',');
 		setTags(player, newtags);
-		return;
 
 	}
 
 	public static void removeTag(ProxiedPlayer player, String tag) {
 
 		removeTag(player.getName(), tag);
-		return;
 
 	}
 
 	public static void removeTag(String player, String tag) {
 
-		List<String> tags = new ArrayList<String>(Arrays.asList(getTags(player).split(",")));
+		List<String> tags = new ArrayList<>(Arrays.asList(getTags(player).split(",")));
 
-		if (tags.contains(tag.toLowerCase())) {
-			tags.remove(tag.toLowerCase());
-		}
+		tags.remove(tag.toLowerCase());
 
 		String newtags = StringUtils.join(tags, ',');
 		setTags(player, newtags);
-		return;
 
 	}
 

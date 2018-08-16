@@ -45,9 +45,7 @@ public class BetaKeyBase {
 		} catch (IllegalArgumentException | SQLException e) {
 			e.printStackTrace();
 		}
-		
-		return;
-		
+
 	}
 	
 	public static String getKey(String player) {
@@ -79,11 +77,11 @@ public class BetaKeyBase {
 		try {
 			
 			MessageDigest md = MessageDigest.getInstance("MD5");
-			md.update(randUId.toString().getBytes());
+			md.update(randUId.getBytes());
 			byte[] digest = md.digest();
 			
-			StringBuffer sb = new StringBuffer();
-			
+			StringBuilder sb = new StringBuilder();
+
 			for (byte b : digest) {
 				sb.append(String.format("%02x", b & 0xff));
 			}

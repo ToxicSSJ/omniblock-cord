@@ -903,7 +903,6 @@ public class NumberUtils {
      * @return the minimum value in the array
      * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
      * @throws IllegalArgumentException if <code>array</code> is empty
-     * @see IEEE754rUtils#min(double[]) IEEE754rUtils for a version of this method that handles NaN differently
      * @since 3.4 Changed signature from min(double[]) to min(double...)
      */
     public static double min(final double... array) {
@@ -931,7 +930,6 @@ public class NumberUtils {
      * @return the minimum value in the array
      * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
      * @throws IllegalArgumentException if <code>array</code> is empty
-     * @see IEEE754rUtils#min(float[]) IEEE754rUtils for a version of this method that handles NaN differently
      * @since 3.4 Changed signature from min(float[]) to min(float...)
      */
     public static float min(final float... array) {
@@ -1057,7 +1055,6 @@ public class NumberUtils {
      * @return the maximum value in the array
      * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
      * @throws IllegalArgumentException if <code>array</code> is empty
-     * @see IEEE754rUtils#max(double[]) IEEE754rUtils for a version of this method that handles NaN differently
      * @since 3.4 Changed signature from max(double[]) to max(double...)
      */
     public static double max(final double... array) {
@@ -1085,7 +1082,6 @@ public class NumberUtils {
      * @return the maximum value in the array
      * @throws IllegalArgumentException if <code>array</code> is <code>null</code>
      * @throws IllegalArgumentException if <code>array</code> is empty
-     * @see IEEE754rUtils#max(float[]) IEEE754rUtils for a version of this method that handles NaN differently
      * @since 3.4 Changed signature from max(float[]) to max(float...)
      */
     public static float max(final float... array) {
@@ -1203,7 +1199,6 @@ public class NumberUtils {
      * @param b  value 2
      * @param c  value 3
      * @return  the smallest of the values
-     * @see IEEE754rUtils#min(double, double, double) for a version of this method that handles NaN differently
      */
     public static double min(final double a, final double b, final double c) {
         return Math.min(Math.min(a, b), c);
@@ -1219,7 +1214,6 @@ public class NumberUtils {
      * @param b  value 2
      * @param c  value 3
      * @return  the smallest of the values
-     * @see IEEE754rUtils#min(float, float, float) for a version of this method that handles NaN differently
      */
     public static float min(final float a, final float b, final float c) {
         return Math.min(Math.min(a, b), c);
@@ -1309,7 +1303,6 @@ public class NumberUtils {
      * @param b  value 2
      * @param c  value 3
      * @return  the largest of the values
-     * @see IEEE754rUtils#max(double, double, double) for a version of this method that handles NaN differently
      */
     public static double max(final double a, final double b, final double c) {
         return Math.max(Math.max(a, b), c);
@@ -1325,7 +1318,6 @@ public class NumberUtils {
      * @param b  value 2
      * @param c  value 3
      * @return  the largest of the values
-     * @see IEEE754rUtils#max(float, float, float) for a version of this method that handles NaN differently
      */
     public static float max(final float a, final float b, final float c) {
         return Math.max(Math.max(a, b), c);
@@ -1477,11 +1469,7 @@ public class NumberUtils {
         }
         if (i < chars.length) {
             if (chars[i] >= '0' && chars[i] <= '9') {
-                if (SystemUtils.IS_JAVA_1_6 && hasLeadingPlusSign && !hasDecPoint) {
-                    return false;
-                }
-                // no type qualifier, OK
-                return true;
+                return !SystemUtils.IS_JAVA_1_6 || !hasLeadingPlusSign || hasDecPoint;
             }
             if (chars[i] == 'e' || chars[i] == 'E') {
                 // can't have an E at the last byte

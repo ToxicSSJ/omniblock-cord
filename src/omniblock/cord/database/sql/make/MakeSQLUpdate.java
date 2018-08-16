@@ -23,8 +23,8 @@ public class MakeSQLUpdate {
 
 	private TableType table;
 	private TableOperation operation;
-	private HashMap<String, String> rows = new HashMap<String, String>();
-	private HashMap<String, String> where = new HashMap<String, String>();
+	private HashMap<String, String> rows = new HashMap<>();
+	private HashMap<String, String> where = new HashMap<>();
 
 	public MakeSQLUpdate(TableType table, TableOperation operation) {
 		this.table = table;
@@ -56,20 +56,23 @@ public class MakeSQLUpdate {
 		}
 
 		if (operation == TableOperation.INSERT) {
-			String prepareSQL = "INSERT INTO " + table.getTableName() + " ";
-			String rowPart = "(";
-			String valuePart = "(";
+			String prepareSQL;
+			prepareSQL = "INSERT INTO " + table.getTableName() + " ";
+			StringBuilder rowPart;
+			rowPart = new StringBuilder("(");
+			StringBuilder valuePart;
+			valuePart = new StringBuilder("(");
 
 			Iterator<Entry<String, String>> iterator = rows.entrySet().iterator();
 
 			while (iterator.hasNext()) {
 				Entry<String, String> entry = iterator.next();
 				if (iterator.hasNext()) {
-					rowPart += entry.getKey() + ", ";
-					valuePart += "'" + entry.getValue() + "', ";
+					rowPart.append(entry.getKey()).append(", ");
+					valuePart.append("'").append(entry.getValue()).append("', ");
 				} else {
-					rowPart += entry.getKey() + ")";
-					valuePart += "'" + entry.getValue() + "')";
+					rowPart.append(entry.getKey()).append(")");
+					valuePart.append("'").append(entry.getValue()).append("')");
 				}
 			}
 
@@ -79,57 +82,59 @@ public class MakeSQLUpdate {
 			stm.executeUpdate(prepareSQL);
 			stm.close();
 		} else if (operation == TableOperation.UPDATE) {
-			String prepareSQL = "UPDATE " + table.getTableName() + " SET ";
+			StringBuilder prepareSQL;
+			prepareSQL = new StringBuilder("UPDATE " + table.getTableName() + " SET ");
 
 			Iterator<Entry<String, String>> iterator = rows.entrySet().iterator();
 
 			while (iterator.hasNext()) {
 				Entry<String, String> entry = iterator.next();
 				if (iterator.hasNext()) {
-					prepareSQL += entry.getKey() + " = '" + entry.getValue() + "', ";
+					prepareSQL.append(entry.getKey()).append(" = '").append(entry.getValue()).append("', ");
 				} else {
-					prepareSQL += entry.getKey() + " = '" + entry.getValue() + "'";
+					prepareSQL.append(entry.getKey()).append(" = '").append(entry.getValue()).append("'");
 				}
 			}
 
-			prepareSQL += " WHERE ";
+			prepareSQL.append(" WHERE ");
 
 			iterator = where.entrySet().iterator();
 
 			while (iterator.hasNext()) {
 				Entry<String, String> entry = iterator.next();
 				if (iterator.hasNext()) {
-					prepareSQL += entry.getKey() + " = '" + entry.getValue() + "' AND ";
+					prepareSQL.append(entry.getKey()).append(" = '").append(entry.getValue()).append("' AND ");
 				} else {
-					prepareSQL += entry.getKey() + " = '" + entry.getValue() + "'";
+					prepareSQL.append(entry.getKey()).append(" = '").append(entry.getValue()).append("'");
 				}
 			}
 
 			Statement stm = Database.getConnection().createStatement();
-			stm.executeUpdate(prepareSQL);
+			stm.executeUpdate(prepareSQL.toString());
 			stm.close();
 		} else if (operation == TableOperation.DELETE) {
 			
-			String prepareSQL = "DELETE FROM " + table.getTableName() + " WHERE ";
+			StringBuilder prepareSQL;
+			prepareSQL = new StringBuilder("DELETE FROM " + table.getTableName() + " WHERE ");
 
 			Iterator<Entry<String, String>> iterator = where.entrySet().iterator();
 
 			while (iterator.hasNext()) {
 				Entry<String, String> entry = iterator.next();
 				if (iterator.hasNext()) {
-					prepareSQL += entry.getKey() + " = '" + entry.getValue() + "' AND ";
+					prepareSQL.append(entry.getKey()).append(" = '").append(entry.getValue()).append("' AND ");
 				} else {
-					prepareSQL += entry.getKey() + " = '" + entry.getValue() + "'";
+					prepareSQL.append(entry.getKey()).append(" = '").append(entry.getValue()).append("'");
 				}
 			}
 
 			Statement stm = Database.getConnection().createStatement();
-			stm.executeUpdate(prepareSQL);
+			stm.executeUpdate(prepareSQL.toString());
 			stm.close();
 		}
 	}
 
 	public enum TableOperation {
-		INSERT, UPDATE, DELETE;
+		INSERT, UPDATE, DELETE
 	}
 }

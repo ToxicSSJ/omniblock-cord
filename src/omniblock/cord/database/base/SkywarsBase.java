@@ -234,7 +234,7 @@ public class SkywarsBase {
 	public static void addItem(String player, String item) {
 		
 		List<String> items = new ArrayList<String>();
-		List<String> olditems = Arrays.asList(getItems(player));
+		String[] olditems = getItems(player);
 		
 		for(String k : olditems){
 			
@@ -273,7 +273,7 @@ public class SkywarsBase {
 	public static void removeItem(String player, String item) {
 		
 		List<String> items = new ArrayList<String>();
-		List<String> olditems = Arrays.asList(getItems(player));
+		String[] olditems = getItems(player);
 		
 		for(String k : olditems){
 			
@@ -281,9 +281,8 @@ public class SkywarsBase {
 			else items.add(k);
 			
 		}
-		
-		if(items.contains(item))
-			items.remove(item);
+
+		items.remove(item);
 		
 		MakeSQLUpdate msu = new MakeSQLUpdate(TableType.SKYWARS_DATA, TableOperation.UPDATE);
 		
