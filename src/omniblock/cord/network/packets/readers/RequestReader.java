@@ -40,27 +40,6 @@ public class RequestReader {
 			
 		});
 		
-		Packets.READER.registerReader(new PacketReader<RequestBoostedGamesPacket>(){
-
-			@Override
-			public void readPacket(PacketSocketData<RequestBoostedGamesPacket> packetsocketdata) {
-				
-				PacketStructure structure = packetsocketdata.getStructure();
-				
-				String servername = structure.get(DataType.STRINGS, "servername");
-				
-				PacketsTools.sendBoostedGames2Server(servername);
-				return;
-				
-			}
-
-			@Override
-			public Class<RequestBoostedGamesPacket> getAttachedPacketClass() {
-				return RequestBoostedGamesPacket.class;
-			}
-			
-		});
-		
 		Packets.READER.registerReader(new PacketReader<RequestTexturepackPacket>(){
 
 			@Override
@@ -70,15 +49,7 @@ public class RequestReader {
 				
 				String servername = structure.get(DataType.STRINGS, "servername");
 				String playername = structure.get(DataType.STRINGS, "playername");
-				
-				String resourcetype = PacketsTools.getTexturehash4Player(playername);
-				
-				Packets.STREAMER.streamPacket(new ResposeTexturepackPacket()
-						
-						.setResourcetype(resourcetype).build()
-						
-						.setPacketUUID(packetsocketdata.getPacketUUID())
-						.setReceiver(PacketsTools.SOCKET_PORTS.get(servername)));
+
 				return;
 				
 			}

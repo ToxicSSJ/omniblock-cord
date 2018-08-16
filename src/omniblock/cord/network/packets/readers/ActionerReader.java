@@ -350,29 +350,6 @@ public class ActionerReader {
 			
 		}),
 		
-		NETWORK_BOOSTER_INFO("networkboosterrequest", 1, new ActionExecutor() {
-
-			@Override
-			public ResposeActionExecutorPacket execute(String[] args) {
-				
-				String gametype = args[0];
-				String returned = "disabled";
-				
-				if(!PacketsTools.NETWORK_BOOSTERS.containsKey(gametype))
-					return new ResposeActionExecutorPacket()
-							.setResponse("invalid");
-				
-				if(PacketsTools.NETWORK_BOOSTERS.get(gametype) != null)
-					return new ResposeActionExecutorPacket()
-							.setResponse("enabled#" + PacketsTools.NETWORK_BOOSTERS.get(gametype).getPlayer());
-				
-				return new ResposeActionExecutorPacket()
-						.setResponse(returned);
-				
-			}
-			
-		}),
-		
 		SET_MAINTENANCE("maintenancerequest", 1, new ActionExecutor() {
 
 			@Override

@@ -19,7 +19,7 @@ public class PhaseManager {
 	 * momento de recibir o generar una key y registrarla en la 
 	 * base de datos.
 	 * 
-	 * @param player El nombre del jugador al cual se le 
+	 * @param playername El nombre del jugador al cual se le
 	 * registrará la KEY
 	 * @param generate Si es true en caso de que el jugador no
 	 * tenga una KEY generarla.

@@ -110,29 +110,6 @@ public class PlayerReader {
 			
 		});
 		
-		Packets.READER.registerReader(new PacketReader<PlayerSendToNamedServerPacket>(){
-
-			@Override
-			public void readPacket(PacketSocketData<PlayerSendToNamedServerPacket> packetsocketdata) {
-				
-				PacketStructure structure = packetsocketdata.getStructure();
-				
-				String playername = structure.get(DataType.STRINGS, "playername");
-				String servername = structure.get(DataType.STRINGS, "servername");
-				Boolean party = structure.get(DataType.BOOLEANS, "party");
-				
-				PacketsTools.sendPlayer2Server(playername, servername, party);
-				return;
-				
-			}
-
-			@Override
-			public Class<PlayerSendToNamedServerPacket> getAttachedPacketClass() {
-				return PlayerSendToNamedServerPacket.class;
-			}
-			
-		});
-		
 		Packets.READER.registerReader(new PacketReader<PlayerSendTexturepackPacket>(){
 
 			@Override
@@ -142,8 +119,7 @@ public class PlayerReader {
 				
 				String playername = structure.get(DataType.STRINGS, "playername");
 				String texturehash = structure.get(DataType.STRINGS, "texturehash");
-				
-				PacketsTools.sendPack2Player(playername, texturehash);
+
 				return;
 				
 			}

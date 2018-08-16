@@ -24,40 +24,35 @@ import net.omniblock.packets.OmniPackets;
 import net.omniblock.packets.network.socket.Sockets;
 import net.omniblock.packets.network.socket.helper.SocketHelper;
 import net.omniblock.packets.object.external.SystemType;
-import omniblock.cord.addons.motd.MOTDManager;
-import omniblock.cord.addons.network.PARTYManager;
-import omniblock.cord.addons.network.TABManager;
 import omniblock.cord.addons.network.events.LoginListener;
 import omniblock.cord.addons.resolver.ResolverListener;
 import omniblock.cord.database.Database;
-import omniblock.cord.network.core.io.TABPatcher;
 import omniblock.cord.network.packets.PacketsAdapter;
-import omniblock.cord.network.textures.io.ResourcePackHandler;
 
 public class OmniCord extends Plugin {
-	
+
     public static OmniCord instance;
     public static Configuration configuration;
 
 	@Override
 	public void onEnable() {
-		
+
     	instance = this;
-    	
+
     	OmniPackets.setupSystem(SystemType.OMNICORD);
     	PacketsAdapter.registerReaders();
-    	
+
     	Sockets.SERVER.startServer(SocketHelper.OMNICORD_SOCKET_PORT);
-    	
+
     	loadConfig();
     	Implements();
     	Commands();
-    	
+
     }
 
 	@Override
     public void onLoad() {
-    	
+
     	System.out.println("");
 		System.out.println("");
 		System.out.println("    ,----..    ");
@@ -75,22 +70,15 @@ public class OmniCord extends Plugin {
 		System.out.println("    `---`      ");
 		System.out.println("");
 		System.out.println("");
-    	
+
     }
-    
+
     public void Implements() {
-    	
+
     	Database.makeConnection();
-    	
-    	MOTDManager.start();
-    	TABManager.start();
-    	PARTYManager.start();
-    	TABPatcher.setup();
-    	
+
     	LoginListener.setup();
     	ResolverListener.setup();
-    	
-    	ResourcePackHandler.registerListeners();
     	
     }
 
