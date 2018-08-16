@@ -32,8 +32,7 @@ public class PlayerReader {
 				String message = structure.get(DataType.STRINGS, "message");
 				
 				PacketsTools.sendMessage2Player(playername, message);
-				return;
-				
+
 			}
 
 			@Override
@@ -56,8 +55,7 @@ public class PlayerReader {
 				String subtitle = structure.get(DataType.STRINGS, "subtitle");
 				
 				PacketsTools.sendTitle2Player(playername, title, subtitle);
-				return;
-				
+
 			}
 
 			@Override
@@ -78,8 +76,7 @@ public class PlayerReader {
 				String subtitle = structure.get(DataType.STRINGS, "subtitle");
 				
 				PacketsTools.sendTitle2All(title, subtitle);
-				return;
-				
+
 			}
 
 			@Override
@@ -99,34 +96,12 @@ public class PlayerReader {
 				String message = structure.get(DataType.STRINGS, "message");
 				
 				PacketsTools.sendMessage2All(message);
-				return;
-				
+
 			}
 
 			@Override
 			public Class<BroadcastMessagePacket> getAttachedPacketClass() {
 				return BroadcastMessagePacket.class;
-			}
-			
-		});
-		
-		Packets.READER.registerReader(new PacketReader<PlayerSendTexturepackPacket>(){
-
-			@Override
-			public void readPacket(PacketSocketData<PlayerSendTexturepackPacket> packetsocketdata) {
-				
-				PacketStructure structure = packetsocketdata.getStructure();
-				
-				String playername = structure.get(DataType.STRINGS, "playername");
-				String texturehash = structure.get(DataType.STRINGS, "texturehash");
-
-				return;
-				
-			}
-
-			@Override
-			public Class<PlayerSendTexturepackPacket> getAttachedPacketClass() {
-				return PlayerSendTexturepackPacket.class;
 			}
 			
 		});
@@ -141,8 +116,7 @@ public class PlayerReader {
 				String playername = structure.get(DataType.STRINGS, "playername");
 				
 				PacketsTools.sendBan2Player(playername);
-				return;
-				
+
 			}
 
 			@Override
@@ -164,8 +138,7 @@ public class PlayerReader {
 				String reason = structure.get(DataType.STRINGS, "reason");
 				
 				PacketsTools.sendKick2Player(playername, moderator, reason);
-				return;
-				
+
 			}
 
 			@Override
@@ -186,8 +159,7 @@ public class PlayerReader {
 				Boolean iplogin = structure.get(DataType.BOOLEANS, "iplogin");
 				
 				PacketsTools.sendAuthEvaluate2Player(playername, iplogin);
-				return;
-				
+
 			}
 
 			@Override
@@ -208,8 +180,7 @@ public class PlayerReader {
 				Boolean iplogin = structure.get(DataType.BOOLEANS, "iplogin");
 				
 				PacketsTools.registerAuthSucess2Player(playername, iplogin);
-				return;
-				
+
 			}
 
 			@Override

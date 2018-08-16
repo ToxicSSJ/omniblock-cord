@@ -26,20 +26,9 @@ import omniblock.cord.util.TextUtil;
  */
 public class PacketsTools {
 	
-	public static Map<String, String> SAVED_IP_AUTH = new HashMap<String, String>();
+	public static Map<String, String> SAVED_IP_AUTH = new HashMap<>();
 
-	public static Map<String, Integer> SOCKET_PORTS = new HashMap<String, Integer>();
-
-
-	@SuppressWarnings("deprecation")
-	public static void promptNetworkBooster2Player(String player, String key, String gametype, int duration){
-		
-		ProxiedPlayer target = ProxyServer.getInstance().getPlayer(player);
-		
-		if(target == null) return;
-		if(!target.isConnected()) return;
-		
-	}
+	public static Map<String, Integer> SOCKET_PORTS = new HashMap<>();
 
 	/**
 	 * 
@@ -62,7 +51,7 @@ public class PacketsTools {
 			
 			if(server != null){
 				
-				if(iplogin == true){
+				if(iplogin){
 					
 					if(SAVED_IP_AUTH.containsKey(player)){
 						
@@ -86,8 +75,7 @@ public class PacketsTools {
 		    			.setStatus("LOGIN")
 		    			.build().setReceiver(SOCKET_PORTS.get(server.getName()))
 		    			);
-				return;
-				
+
 			}
 			
 		}
@@ -106,18 +94,17 @@ public class PacketsTools {
 	 */
 	public static void registerAuthSucess2Player(String player, boolean iplogin) {
 		
-		if(iplogin == false) return;
+		if(!iplogin) return;
 		
 		ProxiedPlayer target = ProxyServer.getInstance().getPlayer(player);
 		
 		if(target != null){
 			
 			String ip = target.getAddress().getAddress().getHostAddress();
-			
+
 			if(SAVED_IP_AUTH.containsKey(player)) SAVED_IP_AUTH.remove(player);
 			SAVED_IP_AUTH.put(player, ip);
-			return;
-			
+
 		}
 		
 	}
@@ -160,8 +147,7 @@ public class PacketsTools {
 		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()){
 			
 			player.disconnect(MSGPatcher.MAINTENANCE_KICKED);
-			continue;
-			
+
 		}
 		
 	}
@@ -180,51 +166,48 @@ public class PacketsTools {
 	public static void sendBan2Player(String player) {
 		
 		ProxyServer.getInstance().getScheduler().schedule(OmniCord.getInstance(), new Runnable() {
-			
+
             @SuppressWarnings("deprecation")
 			@Override
             public void run() {
-               
+
             	ProxiedPlayer target = ProxyServer.getInstance().getPlayer(player);
-        		
+
         		if(target != null) {
         			if(target.isConnected()) {
-        				
+
         				ServerInfo server = target.getServer().getInfo();
-        				
+
         				if(SOCKET_PORTS.containsKey(server.getName())){
-        					
+
         					Integer PORT = SOCKET_PORTS.get(server.getName());
-        					
+
         					Packets.STREAMER.streamPacket(new PlayerSendBanPacket()
     				    			.setPlayername(player)
     				    			.build().setReceiver(PORT)
     				    			);
-        					
+
         					ProxyServer.getInstance().getScheduler().schedule(OmniCord.getInstance(), new Runnable() {
-        						
+
         						@Override
         			            public void run() {
-        			            	
+
         			            	if(target.isConnected()) target.disconnect(MSGPatcher.YOURE_BANNED_WITHOUT_VARS);
-        			            	return;
-        			            	
-        			            }
+
+								}
         					}, 2, TimeUnit.SECONDS);
-        					return;
-        					
-        				} else {
-        					
+
+						} else {
+
         					target.disconnect(MSGPatcher.YOURE_BANNED_WITHOUT_VARS);
-        					return;
-        					
-        				}
-        				
+
+						}
+
         			}
         		}
-            	
+
             }
-            
+
         }, 250, TimeUnit.MILLISECONDS);
 		
 	}
@@ -243,8 +226,7 @@ public class PacketsTools {
 		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()){
 			
 			sendMessage2Player(player.getName(), message);
-			continue;
-			
+
 		}
 		
 	}
@@ -265,8 +247,7 @@ public class PacketsTools {
 		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()){
 			
 			sendTitle2Player(player.getName(), title, subtitle);
-			continue;
-			
+
 		}
 		
 	}
@@ -322,8 +303,7 @@ public class PacketsTools {
 				    .stay(100)
 				    .fadeOut(20)
 				    .send(target);
-				return;
-				
+
 			}
 		}
 		

@@ -70,17 +70,4 @@ public class MSGPatcher {
 					
 			);
 	
-	public static final String BETA_JOIN = TextUtil.format(
-			
-			"\n&6&lBETA KEYS" +
-			" \n" +
-			"&7No posees una Beta Key registrada para ingresar al servidor, recuerda\n" +
-			"&7que mientras el servidor se encuentree en la fase de &f&nBetaKeys&r&7 deberás\n " +
-			"&7tener una registrada al nombre de tu cuenta para poder ingresar al servidor.\n " +
-			" \n" +
-			"&7En caso de que tengas una Beta Key y no puedas ingresar al servidor puedes\n" +
-			"&7contactar al soporte de omniblock por medio de Discord: &ddiscord.omniblock.net\n"
-					
-			);
-	
 }
